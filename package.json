@@ -4,8 +4,12 @@
   "private": true,
   "dependencies": {
     "antd": "^3.2.2",
+    "ipfs": "^0.27.7",
+    "orbit-db": "^0.19.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-feather": "^1.0.8",
+    "react-router-dom": "^4.2.2",
     "react-scripts-ts-antd": "2.13.2"
   },
   "scripts": {
@@ -19,6 +23,7 @@
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/react-router-dom": "^4.2.4",
     "typescript": "^2.7.2"
   }
 }
