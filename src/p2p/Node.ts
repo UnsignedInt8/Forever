@@ -2,7 +2,7 @@ import IPFS from 'ipfs';
 import { Event } from '../lib/Event';
 
 const IpfsConfig = {
-    repo: '/ipfs/app/forever',
+    repo: '/ipfs/apps/forever',
     EXPERIMENTAL: {
         pubsub: true,
     },
@@ -62,7 +62,7 @@ export default class Node extends Event {
         return await this.ipfs.pubsub.subscribe(topic, handler);
     }
 
-    unsubscribe(topic: string, handlerToRemove: any){
+    unsubscribe(topic: string, handlerToRemove: any) {
         this.ipfs.pubsub.unsubscribe(topic, handlerToRemove);
     }
 }

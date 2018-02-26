@@ -1,10 +1,11 @@
 import IPFS from 'ipfs';
 import OrbitDB from 'orbit-db';
 import IPFSDir from '../models/Dir';
+import IPFSFile from '../models/File';
 import { Event } from '../lib/Event';
 const uuidv1 = require('uuid/v1');
 
-class FileSystem extends Event {
+export default class FileSystem extends Event {
 
     private orbit: OrbitDB;
     private db: OrbitDB.Store;
@@ -21,7 +22,7 @@ class FileSystem extends Event {
     async load() {
         this.db = await this.orbit.docs(this.address, { indexBy: 'id', write: ['*'] });
         await this.db.load();
-
+        console.log(this.db.address, this.db.address.toString());
         this.db.events.on('replicated', (address) => this.trigger('replicated', address));
         this.db.events.on('replicate', (address) => this.trigger('replicate', address));
     }
@@ -54,8 +55,27 @@ class FileSystem extends Event {
         return this.db.query(item => item) as IPFSDir[];
     }
 
-    addFile() {
+    async addFiles(files: { title: string, content: Buffer }[], dirId: string, progress?: () => void) {
+        return new Promise<IPFSFile[]>((resolve, reject) => {
+            this.ipfs.files.add(
+                files.map(f => { return { path: f.title, content: f.content } }),
+                { progress },
+                async (err, res: { path: string, hash: string, size: number }[]) => {
 
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    let dir = this.db.query(item => item.id === dirId) as IPFSDir;
+                    if (!dir) return;
+                    
+                    let savedFiles = res.map(r => { return { id: r.hash, title: r.path, type: r.path.split('.').pop(), dirId, timestamp: Date.now(), size: r.size } });
+                    dir.files = dir.files.concat(savedFiles);
+
+                    resolve(savedFiles);
+                });
+        });
     }
 
     rmFile(id: string) {

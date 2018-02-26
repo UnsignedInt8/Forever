@@ -13,7 +13,7 @@ export abstract class Event {
             this.events.get(event).push(callback);
             return;
         }
-        
+
         this.events.set(event, [callback]);
     }
 
@@ -24,14 +24,14 @@ export abstract class Event {
      */
     protected trigger(event: string, ...args) {
         let callbacks = this.events.get(event);
-        if (!callbacks || callbacks.length == 0) return;
-        
+        if (!callbacks || callbacks.length === 0) return;
+
         callbacks.forEach(callback => process.nextTick(() => callback.apply(null, args)));
     }
 
     removeEvent(event: string, callback) {
         let observers = this.events.get(event);
-        if (!observers || observers.length == 0) return;
+        if (!observers || observers.length === 0) return;
 
         observers.splice(observers.indexOf(callback), 1);
     }
