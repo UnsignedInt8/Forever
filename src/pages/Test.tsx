@@ -30,21 +30,6 @@ const props = {
                 console.log(files);
             });
 
-        // let reader = new FileReader();
-        // reader.onloadend = async (ev) => {
-        //     console.log('loadend', reader.result);
-        //     node.ipfs.files.add(
-        //         { path: options.file.name, content: Buffer.from(reader.result) },
-        //         { progress(offset: number) { console.log(offset); options.onProgress(offset / reader.result.length); } },
-        //         (err, files) => {
-        //             if (err) { options.onError(err, null); return; }
-        //             options.onSuccess('', null);
-        //         });
-
-        // }
-        // reader.readAsArrayBuffer(options.file);
-        // fs.addFiles
-        // options.file.
         console.log('customRequest', options);
     },
 };

@@ -82,13 +82,14 @@ export default class FileSystem extends Event {
                             return;
                         }
 
-                        let dir = (this.db.query(item => item.id === dirId) as IPFSDir[]).pop();
+                        let dirs = this.db.query(item => item.id === dirId) as IPFSDir[];
+                        let dir = dirs.pop();
                         if (!dir) return;
 
-                        let savedFiles = res.map(r => { return { id: r.hash, title: r.path, type: r.path.split('.').pop(), dirId, timestamp: Date.now(), size: r.size } });
-                        console.log(res, savedFiles);
+                        let savedFiles = res.map(r => { return { id: r.hash, title: file.name, type: file.type, dirId, timestamp: Date.now(), size: r.size } });
                         dir.files = dir.files.concat(savedFiles);
-
+                        this.updateDir(dir);
+                        
                         resolve(savedFiles);
                     });
             };
