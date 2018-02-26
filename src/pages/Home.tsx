@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Layout, Menu, Icon } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 import { Box } from 'react-feather';
+import lang from '../i18n';
 
 interface HomeStates {
     contentMarginLeft: number;
@@ -25,15 +26,15 @@ export class Home extends React.Component<{}, HomeStates> {
                     <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
                         <Menu.Item key="1">
                             <Icon type="hdd" />
-                            <span className="nav-text">Files</span>
+                            <span className="nav-text">{lang.siders.files}</span>
                         </Menu.Item>
                         <Menu.Item key="2">
                             <Icon type="video-camera" />
-                            <span className="nav-text">Videos</span>
+                            <span className="nav-text">{lang.siders.videos}</span>
                         </Menu.Item>
                         <Menu.Item key="3">
                             <Icon type="play-circle-o" />
-                            <span className="nav-text">Music</span>
+                            <span className="nav-text">{lang.siders.music}</span>
                         </Menu.Item>
                         <Menu.Item key="4">
                             <Icon type="bar-chart" />
@@ -49,11 +50,11 @@ export class Home extends React.Component<{}, HomeStates> {
                         </Menu.Item>
                         <Menu.Item key="7">
                             <Icon type="setting" />
-                            <span className="nav-text">Settings</span>
+                            <span className="nav-text">{lang.siders.settings}</span>
                         </Menu.Item>
                         <Menu.Item key="8">
                             <Icon type="info" />
-                            <span className="nav-text">About</span>
+                            <span className="nav-text">{lang.siders.about}</span>
                         </Menu.Item>
                     </Menu>
                 </Sider>

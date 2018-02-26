@@ -1,6 +1,13 @@
 
-const Lang_zh_CN = {
-    
+const chinese_simpified = {
+    siders: {
+        files: '文件',
+        videos: '视频',
+        music: '音乐',
+        about: '关于',
+        settings: '设置',
+    },
+
     messages: {
 
     },
@@ -10,4 +17,4 @@ const Lang_zh_CN = {
     }
 }
 
-export default Lang_zh_CN;
+export default chinese_simpified;

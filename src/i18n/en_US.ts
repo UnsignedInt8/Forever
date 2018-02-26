@@ -1,6 +1,20 @@
 
-const Lang_en_US = {
+const english = {
+    siders: {
+        files: 'Files',
+        videos: 'Videos',
+        music: 'Music',
+        about: 'About',
+        settings: 'Settings',
+    },
 
+    messages: {
+
+    },
+
+    titles: {
+
+    }
 };
 
-export default Lang_en_US;
+export default english;
