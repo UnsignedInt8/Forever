@@ -1,11 +1,16 @@
 
 const english = {
     siders: {
-        files: 'Files',
+        all: 'All',
         videos: 'Videos',
         music: 'Music',
         about: 'About',
         settings: 'Settings',
+    },
+
+    buttons: {
+        upload: 'Upload',
+        newfolder: 'New Folder'
     },
 
     messages: {

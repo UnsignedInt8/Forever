@@ -3,11 +3,17 @@ import en_US from './en_US';
 
 type Language = {
     siders: {
+        all: string;
         files: string;
         videos: string;
         music: string;
         about: string;
         settings: string;
+    }
+
+    buttons: {
+        upload: string;
+        newfolder: string;
     }
 }
 
