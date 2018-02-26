@@ -44,14 +44,24 @@ export default class FileSystem extends Event {
         };
 
         let hash = await this.db.put(dir);
-        return hash ? true : false;
+        return hash ? dir : null;
     }
 
     async rmdir(id: string) {
         return await this.db.del(id) ? true : false;
     }
 
-    async listDirs() {
+    getDir(id: string) {
+        let items = this.db.get(id);
+        return items && items instanceof Array ? items[0] : null;
+    }
+
+    async updateDir(dir: IPFSDir) {
+        let hash = await this.db.put(dir);
+        return hash ? dir : null;
+    }
+
+    listDirs() {
         return this.db.query(item => item) as IPFSDir[];
     }
 
@@ -69,7 +79,7 @@ export default class FileSystem extends Event {
 
                     let dir = this.db.query(item => item.id === dirId) as IPFSDir;
                     if (!dir) return;
-                    
+
                     let savedFiles = res.map(r => { return { id: r.hash, title: r.path, type: r.path.split('.').pop(), dirId, timestamp: Date.now(), size: r.size } });
                     dir.files = dir.files.concat(savedFiles);
 

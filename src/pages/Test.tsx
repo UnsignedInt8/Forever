@@ -5,8 +5,7 @@ import * as ipfstest from '../tests/IPFS';
 export class Test extends React.Component {
 
     async componentDidMount() {
-        await ipfstest.testNode();
-        await ipfstest.testfs();
+        await ipfstest.testDirs();
     }
 
     render() {
