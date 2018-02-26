@@ -10,7 +10,8 @@
     "react-dom": "^16.2.0",
     "react-feather": "^1.0.8",
     "react-router-dom": "^4.2.2",
-    "react-scripts-ts-antd": "2.13.2"
+    "react-scripts-ts-antd": "2.13.2",
+    "uuid": "^3.2.1"
   },
   "scripts": {
     "start": "react-scripts-ts-antd start",
