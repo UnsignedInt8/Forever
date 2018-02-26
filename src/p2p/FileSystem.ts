@@ -65,26 +65,33 @@ export default class FileSystem extends Event {
         return this.db.query(item => item) as IPFSDir[];
     }
 
-    async addFiles(files: { title: string, content: Buffer }[], dirId: string, progress?: () => void) {
+    async addFile(file: File, dirId: string, onProgress?: (offset: number, total: number) => void) {
         return new Promise<IPFSFile[]>((resolve, reject) => {
-            this.ipfs.files.add(
-                files.map(f => { return { path: f.title, content: f.content } }),
-                { progress },
-                async (err, res: { path: string, hash: string, size: number }[]) => {
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onerror = (ev) => reject();
+            reader.onabort = (ev) => reject();
+            reader.onloadend = (ev) => {
+                this.ipfs.files.add(
+                    { path: file.name, content: Buffer.from(reader.result) },
+                    { progress(offset) { onProgress(offset, file.size) } },
+                    async (err, res: { path: string, hash: string, size: number }[]) => {
 
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
 
-                    let dir = this.db.query(item => item.id === dirId) as IPFSDir;
-                    if (!dir) return;
+                        let dir = (this.db.query(item => item.id === dirId) as IPFSDir[]).pop();
+                        if (!dir) return;
 
-                    let savedFiles = res.map(r => { return { id: r.hash, title: r.path, type: r.path.split('.').pop(), dirId, timestamp: Date.now(), size: r.size } });
-                    dir.files = dir.files.concat(savedFiles);
+                        let savedFiles = res.map(r => { return { id: r.hash, title: r.path, type: r.path.split('.').pop(), dirId, timestamp: Date.now(), size: r.size } });
+                        console.log(res, savedFiles);
+                        dir.files = dir.files.concat(savedFiles);
 
-                    resolve(savedFiles);
-                });
+                        resolve(savedFiles);
+                    });
+            };
         });
     }
 
