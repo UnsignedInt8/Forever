@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Row } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 import { Box } from 'react-feather';
 import lang from '../i18n';
@@ -18,21 +18,21 @@ export class Home extends React.Component<{}, HomeStates> {
     render() {
         return (
             <Layout>
-                <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }} collapsible={true} breakpoint="md" onCollapse={(collapsed, type) => this.setState({ contentMarginLeft: collapsed ? 80 : 200 })}>
+                <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, zIndex: 1 }} collapsible={true} breakpoint="md" onCollapse={(collapsed, type) => this.setState({ contentMarginLeft: collapsed ? 80 : 200 })}>
                     <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'flex-start', marginLeft: 24, marginTop: 16, marginBottom: 4, color: 'white' }}>
                         <Box color='white' size={32} />
                         <div style={{ fontWeight: 100, fontSize: '20px', marginLeft: 20, marginTop: 2, display: `${this.state.contentMarginLeft === 200 ? 'inline-block' : 'none'}` }}>Forever</div>
                     </div>
                     <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-                        <Menu.Item key="1">
+                        <Menu.Item key="files">
                             <Icon type="hdd" />
                             <span className="nav-text">{lang.siders.files}</span>
                         </Menu.Item>
-                        <Menu.Item key="2">
+                        <Menu.Item key="videos">
                             <Icon type="video-camera" />
                             <span className="nav-text">{lang.siders.videos}</span>
                         </Menu.Item>
-                        <Menu.Item key="3">
+                        <Menu.Item key="music">
                             <Icon type="play-circle-o" />
                             <span className="nav-text">{lang.siders.music}</span>
                         </Menu.Item>
@@ -48,41 +48,27 @@ export class Home extends React.Component<{}, HomeStates> {
                             <Icon type="appstore-o" />
                             <span className="nav-text">nav 6</span>
                         </Menu.Item>
-                        <Menu.Item key="7">
+                        <Menu.Item key="settings">
                             <Icon type="setting" />
                             <span className="nav-text">{lang.siders.settings}</span>
                         </Menu.Item>
-                        <Menu.Item key="8">
+                        <Menu.Item key="info">
                             <Icon type="info" />
                             <span className="nav-text">{lang.siders.about}</span>
                         </Menu.Item>
                     </Menu>
                 </Sider>
 
-                <Layout style={{ marginLeft: this.state.contentMarginLeft }}>
-                    <Header style={{ background: '#fff', padding: 0 }} />
-                    <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        <div style={{ padding: 24, background: '#fff', textAlign: 'center' }}>
-                            ...
-            <br />
-                            Really
-            <br />...<br />...<br />...<br />
-                            long
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />...
-            <br />...<br />...<br />...<br />...<br />...<br />
-                            content
-            </div>
+                <Layout style={{ marginLeft: this.state.contentMarginLeft, }}>
+                    <Header style={{ background: '#101529', padding: 0, height: 60, position: 'fixed', width: '100%', top: 0, right: 0, }} />
+                    <Content style={{ margin: '84px 16px 0', overflow: 'initial', minHeight: `${window.innerHeight - 140}px`, }}>
+
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>
-                        Ant Design ©2016 Created by Ant UED
-         </Footer>
+                    <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100 }}>
+                        Forever, built on IPFS
+                    </Footer>
                 </Layout>
-            </Layout>
+            </Layout >
         );
     }
 }
