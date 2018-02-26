@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Menu, Icon, Row } from 'antd';
+import { Layout, Menu, Icon, Row, Button } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 import { Box } from 'react-feather';
 import lang from '../i18n';
@@ -61,10 +61,15 @@ export class Home extends React.Component<{}, HomeStates> {
 
                 <Layout style={{ marginLeft: this.state.contentMarginLeft, }}>
                     <Header style={{ background: '#101529', padding: 0, height: 60, position: 'fixed', width: '100%', top: 0, right: 0, }} />
-                    <Content style={{ margin: '84px 16px 0', overflow: 'initial', minHeight: `${window.innerHeight - 140}px`, }}>
-
+                    <Content style={{ margin: '60px 0 0 0', overflow: 'initial', height: '100%', minHeight: `${window.innerHeight - 92}px`, }}>
+                        <div style={{ background: '#fff', minHeight: `${window.innerHeight - 92}px`, position: 'relative' }}>
+                            <Row style={{ padding: 12 }}>
+                                <Button className='action_button' icon='upload' type='primary'>Upload</Button>
+                                <Button className='action_button' icon='folder-add'>New Folder</Button>
+                            </Row>
+                        </div>
                     </Content>
-                    <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100 }}>
+                    <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100, padding: '10px 0 8px' }}>
                         Forever, built on IPFS
                     </Footer>
                 </Layout>
