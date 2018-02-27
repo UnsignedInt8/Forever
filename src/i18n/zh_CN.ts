@@ -27,7 +27,7 @@ const chinese_simpified = {
     },
 
     messages: {
-
+        dragfiles: '拖拽文件到此处'
     },
 
     titles: {

@@ -77,6 +77,7 @@ export class Home extends React.Component<{}, HomeStates> {
     constructor(props: any, ctx: any) {
         super(props, ctx);
         this.state = { contentMarginLeft: 200, selectedRowKeys: [] };
+        window.onresize = () => { this.setState({ clientOffset: this.container.getBoundingClientRect() }) };
     }
 
     onSelectChange = (selectedRowKeys) => {
@@ -145,7 +146,7 @@ export class Home extends React.Component<{}, HomeStates> {
                         <p className="ant-upload-drag-icon">
                             <Icon type="inbox" />
                         </p>
-                        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                        <p className="ant-upload-text">{lang.messages.dragfiles}</p>
                     </Dragger>
                 </Modal>
             </div>

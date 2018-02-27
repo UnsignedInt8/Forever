@@ -27,7 +27,7 @@ const english = {
     },
 
     messages: {
-
+        dragfiles: 'Click or drag file to this area',
     },
 
     titles: {

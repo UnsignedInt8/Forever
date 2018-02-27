@@ -22,12 +22,16 @@ type Language = {
     table: {
         name: string;
         actions: string;
-    }
+    },
 
     placeholders: {
         folder: string;
         search: string;
-    }
+    },
+
+    messages: {
+        dragfiles: string;
+    },
 }
 
 export const langauges = {
