@@ -9,11 +9,16 @@ type Language = {
         music: string;
         about: string;
         settings: string;
-    }
+    },
 
     buttons: {
         upload: string;
         newfolder: string;
+    },
+
+    table: {
+        name: string;
+        actions: string;
     }
 }
 

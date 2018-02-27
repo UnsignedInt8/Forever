@@ -13,6 +13,11 @@ const english = {
         newfolder: 'New Folder'
     },
 
+    table: {
+        name: 'File name',
+        actions: 'Actions',
+    },
+
     messages: {
 
     },

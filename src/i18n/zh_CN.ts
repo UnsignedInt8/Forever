@@ -13,6 +13,11 @@ const chinese_simpified = {
         newfolder: '新建文件夹',
     },
 
+    table: {
+        name: '文件名',
+        actions: '操作',
+    },
+
     messages: {
 
     },
