@@ -14,11 +14,19 @@ type Language = {
     buttons: {
         upload: string;
         newfolder: string;
+        cancel: string;
+        confirm: string;
+        save: string;
     },
 
     table: {
         name: string;
         actions: string;
+    }
+
+    placeholders: {
+        folder: string;
+        search: string;
     }
 }
 

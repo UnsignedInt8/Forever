@@ -4,7 +4,7 @@
     ],
     "rules": {
         "align": [
-            true,
+            false,
             "parameters",
             "arguments",
             "statements"
