@@ -1,8 +1,8 @@
+import StorageItem from './StorageItem';
 
-type IPFSFile = {
-    id: string; // IPFS CID
+interface IPFSFile extends StorageItem {
     title: string;
-    type: string;
+    mime: string;
     dirId: string; // Virtual Dir Id
     timestamp: number; // Javascript timestamp (millisecond)
     size: number; // bytes

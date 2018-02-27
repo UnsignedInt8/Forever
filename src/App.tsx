@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import './App.scss';
 import { Home } from './pages/Home';
 import { Test } from './pages/Test';
+import NetworkManager from './p2p/NetworkManager';
 
 interface HomeStates {
   contentMarginLeft: number;
@@ -19,6 +20,7 @@ class App extends React.Component<{}, HomeStates> {
   constructor(props: any, ctx: any) {
     super(props, ctx);
     this.state = { contentMarginLeft: 200 };
+    NetworkManager.init();
   }
 
   render() {

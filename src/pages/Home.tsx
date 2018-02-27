@@ -116,7 +116,7 @@ export class Home extends React.Component<{}, HomeStates> {
                 <Row style={{ padding: '10px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} type='flex' justify='space-between'>
                     <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
                         <Button className='action_button' icon='upload' type='primary' onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
-                        <Popover trigger='click' content={newFolder}>
+                        <Popover trigger='click' content={newFolder} placement='bottom'>
                             <Button className='action_button' icon='folder-add'>{lang.buttons.newfolder}</Button>
                         </Popover>
                     </div>

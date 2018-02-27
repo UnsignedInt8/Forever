@@ -6,14 +6,31 @@ export default class NetworkManager {
 
     static node: Node;
     static filesystem: FileSystem;
+    static ready = false;
+
+    private static subscribers: Function[] = [];
+
+    static async init() {
+        await NetworkManager.getFs();
+    }
 
     static async getNode(repo?: string) {
         if (NetworkManager.node) return NetworkManager.node;
 
         return new Promise<Node>((resolve, reject) => {
             NetworkManager.node = new Node(repo);
-            NetworkManager.node.onReady(() => resolve(NetworkManager.node));
-            NetworkManager.node.onError(() => { });
+
+            NetworkManager.node.onReady(() => {
+                resolve(NetworkManager.node);
+                NetworkManager.ready = true;
+                NetworkManager.subscribers.forEach(s => s());
+            });
+
+            NetworkManager.node.onError(() => {
+                NetworkManager.ready = false;
+                NetworkManager.subscribers.forEach(s => s());
+            });
+
             setTimeout(() => reject(), 60 * 1000);
         });
     }
@@ -27,5 +44,9 @@ export default class NetworkManager {
             await NetworkManager.filesystem.load();
             resolve(NetworkManager.filesystem);
         });
+    }
+
+    static onStateChanged(callback: Function) {
+        NetworkManager.subscribers.push(callback);
     }
 }

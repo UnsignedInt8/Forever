@@ -44,7 +44,9 @@ export default class FileSystem extends Event {
             id,
             title,
             files: [],
+            dirs: [],
             parentId: parent,
+            type: 'dir',
         };
 
         let hash = await this.db.put(dir);
@@ -69,6 +71,22 @@ export default class FileSystem extends Event {
         return this.db.query(item => item) as IPFSDir[];
     }
 
+    buildTree() {
+        let dirs = this.listDirs();
+        let rootDir = dirs.filter(f => f.id === 'root')[0];
+        let dirsMap = new Map<string, IPFSDir>();
+        dirs.forEach(dir => {
+            dirsMap.set(dir.id, dir);
+            if (dir.id === 'root') return;
+
+            let parentDir = dirsMap.get(dir.parentId || 'root');
+            parentDir.dirs = parentDir.dirs || [];
+            parentDir.dirs.push(dir);
+        });
+
+        return rootDir;
+    }
+
     async addFile(file: File, dirId: string, onProgress?: (offset: number, total: number) => void) {
         return new Promise<IPFSFile[]>((resolve, reject) => {
             let reader = new FileReader();
@@ -90,7 +108,7 @@ export default class FileSystem extends Event {
                         let dir = dirs.pop();
                         if (!dir) return;
 
-                        let savedFiles = res.map(r => { return { id: r.hash, title: file.name, type: file.type, dirId, timestamp: Date.now(), size: r.size } });
+                        let savedFiles = res.map<IPFSFile>(r => { return { id: r.hash, type: 'file', title: file.name, mime: file.type, dirId, timestamp: Date.now(), size: r.size, } });
                         dir.files = dir.files.concat(savedFiles);
                         this.updateDir(dir);
 
