@@ -25,6 +25,10 @@ export default class FileSystem extends Event {
         console.log(this.db.address, this.db.address.toString());
         this.db.events.on('replicated', (address) => this.trigger('replicated', address));
         this.db.events.on('replicate', (address) => this.trigger('replicate', address));
+
+        if (!this.getDir('root')) {
+            await this.mkdir('root', '', 'root')
+        }
     }
 
     onReplicated(callback: (sender: FileSystem, address: string) => void) {
@@ -35,9 +39,9 @@ export default class FileSystem extends Event {
         super.register('replicate', callback);
     }
 
-    async mkdir(title: string, parent?: string) {
+    async mkdir(title: string, parent = 'root', id = uuidv1()) {
         let dir: IPFSDir = {
-            id: uuidv1(),
+            id,
             title,
             files: [],
             parentId: parent,
@@ -89,7 +93,7 @@ export default class FileSystem extends Event {
                         let savedFiles = res.map(r => { return { id: r.hash, title: file.name, type: file.type, dirId, timestamp: Date.now(), size: r.size } });
                         dir.files = dir.files.concat(savedFiles);
                         this.updateDir(dir);
-                        
+
                         resolve(savedFiles);
                     });
             };

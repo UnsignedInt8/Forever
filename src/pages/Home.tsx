@@ -29,7 +29,8 @@ export class Home extends React.Component<{}, HomeStates> {
         title: lang.table.name,
         dataIndex: 'name',
         width: '80%',
-        render: (text: string, record: any, index: number) => { return (<div></div>) }
+        sorter: (a, b) => a.name > b.name ? 1 : 0,
+        render: (text: string, record: any, index: number) => { return (<div>{text}</div>) }
     }, {
         title: lang.table.actions,
         dataIndex: '',
