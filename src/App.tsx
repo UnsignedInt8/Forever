@@ -28,7 +28,7 @@ class App extends React.Component<{}, HomeStates> {
           <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, zIndex: 2 }} collapsible={true} breakpoint="md" onCollapse={(collapsed, type) => this.setState({ contentMarginLeft: collapsed ? 80 : 200 })}>
             <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'flex-start', marginLeft: 24, marginTop: 16, marginBottom: 8, color: 'white' }}>
               <Box color='white' size={32} />
-              <div style={{ fontWeight: 100, fontSize: '20px', marginLeft: 20, marginTop: 2, display: `${this.state.contentMarginLeft === 200 ? 'inline-block' : 'none'}` }}>Forever</div>
+              <div className='logo' style={{ display: `${this.state.contentMarginLeft === 200 ? 'inline-block' : 'none'}` }}>Forever</div>
             </div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['all']}>
               <Menu.Item key="all">
