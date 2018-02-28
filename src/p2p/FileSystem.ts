@@ -39,25 +39,32 @@ export default class FileSystem extends Event {
         super.register('replicate', callback);
     }
 
-    async mkdir(title: string, parent = 'root', id = uuidv1()) {
+    async mkdir(title: string, parentId = 'root', id = uuidv1()) {
         let dir: IPFSDir = {
             id,
             title,
             files: [],
             dirs: [],
-            parentId: parent,
+            parentId,
             type: 'dir',
         };
 
         let hash = await this.db.put(dir);
-        return hash ? dir : null;
+        if (!hash) return null;
+
+        let parent = this.getDir(parentId);
+        if (!parent) return dir;
+        parent.dirs.unshift(dir);
+        await this.updateDir(parent);
+
+        return dir;
     }
 
     async rmdir(id: string) {
         return await this.db.del(id) ? true : false;
     }
 
-    getDir(id: string) {
+    getDir(id: string): IPFSDir {
         let items = this.db.get(id);
         return items && items instanceof Array ? items[0] : null;
     }
@@ -67,21 +74,33 @@ export default class FileSystem extends Event {
         return hash ? dir : null;
     }
 
-    listDirs() {
-        return this.db.query(item => item) as IPFSDir[];
+    listAllItems() {
+        return this.db.query(item => item) as (IPFSDir | IPFSFile)[];
     }
 
     buildTree() {
-        let dirs = this.listDirs();
-        let rootDir = dirs.filter(f => f.id === 'root')[0];
-        let dirsMap = new Map<string, IPFSDir>();
-        dirs.forEach(dir => {
-            dirsMap.set(dir.id, dir);
-            if (dir.id === 'root') return;
+        let items = this.listAllItems();
+        let rootDir = items.filter(f => f.id === 'root')[0] as IPFSDir;
+        let dirsMap = new Map<string, (IPFSDir | IPFSFile)>();
+        rootDir.dirs = rootDir.dirs || [];
 
-            let parentDir = dirsMap.get(dir.parentId || 'root');
-            parentDir.dirs = parentDir.dirs || [];
-            parentDir.dirs.push(dir);
+        items.forEach(item => dirsMap.set(item.id, item));
+        items.forEach(item => {
+            if (item.id === 'root') return;
+
+            let dir = item.type === 'dir' ? item as IPFSDir : null;
+            let file = item.type === 'file' ? item as IPFSFile : null;
+
+            if (file) {
+                let parentDir = dirsMap.get(file.dirId || 'root') as IPFSDir;
+                parentDir.files.push(file);
+                return;
+            }
+
+            if (dir) {
+                let parentDir = dirsMap.get(dir.parentId || 'root') as IPFSDir;
+                parentDir.dirs.push(dir);
+            }
         });
 
         return rootDir;

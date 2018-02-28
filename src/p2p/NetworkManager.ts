@@ -49,4 +49,10 @@ export default class NetworkManager {
     static onStateChanged(callback: Function) {
         NetworkManager.subscribers.push(callback);
     }
+
+    static removeListener(callback: Function) {
+        let index = NetworkManager.subscribers.indexOf(callback);
+        if (index === -1) return;
+        NetworkManager.subscribers.splice(index, 1);
+    }
 }

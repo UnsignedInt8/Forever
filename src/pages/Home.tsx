@@ -8,34 +8,42 @@ import NetworkManager from '../p2p/NetworkManager';
 import { FileItem } from '../components/FileItem';
 import IPFSDir from '../models/Dir';
 import IPFSFile from '../models/File';
+import FileSystem from '../p2p/FileSystem';
 
 
-const data = [];
-for (let i = 0; i < 46; i++) {
-    data.push({
-        key: i,
-        name: `Edward King ${i}`,
-        type: i % 5 === 0 ? 'dir' : 'file',
-        mime: ['video/', 'audio/', 'application/pdf', 'application/msword', 'text/', 'image/'][i % 6],
-    });
-}
+// const data2 = [];
+// for (let i = 0; i < 46; i++) {
+//     data2.push({
+//         key: i,
+//         title: `Edward King ${i}`,
+//         type: i % 5 === 0 ? 'dir' : 'file',
+//         mime: ['video/', 'audio/', 'application/pdf', 'application/msword', 'text/', 'image/'][i % 6],
+//     });
+// }
 
 interface HomeStates {
-    contentMarginLeft: number;
-    selectedRowKeys: string[],
     clientOffset?: ClientRect;
     newFolderName?: string;
     openUploadModal?: boolean;
+    popoverVisible?: boolean;
+
+    ipfsReady?: boolean;
+    isLoading: boolean;
+
     currentDir?: IPFSDir;
+    selectedRowKeys: string[];
+    data: (IPFSDir | IPFSFile)[];
 }
 
 export class Home extends React.Component<{}, HomeStates> {
+
+    fs: FileSystem;
 
     readonly mobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     readonly columns = [{
         title: lang.table.name,
-        dataIndex: 'name',
+        dataIndex: 'title',
         width: '80%',
         sorter: (a, b) => a.name > b.name ? 1 : 0,
         render: (text: string, record: any, index: number) => {
@@ -91,7 +99,7 @@ export class Home extends React.Component<{}, HomeStates> {
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-        this.state = { contentMarginLeft: 200, selectedRowKeys: [] };
+        this.state = { selectedRowKeys: [], data: [], isLoading: true };
         window.onresize = () => { this.setState({ clientOffset: this.container.getBoundingClientRect() }) };
     }
 
@@ -99,9 +107,14 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ selectedRowKeys });
     }
 
-    onFolderSave() {
-        if (!this.state.newFolderName) return;
+    async onFolderSave() {
+        this.setState({ popoverVisible: false, newFolderName: '' });
 
+        if (!this.state.newFolderName) return;
+        if (!this.fs) return;
+        let dir = await this.fs.mkdir(this.state.newFolderName, this.state.currentDir.id);
+        if (!dir) return;
+        this.updateDirData(await this.fs.getDir(this.state.currentDir.id));
     }
 
     onItemClicked(item: IPFSDir | IPFSFile) {
@@ -116,8 +129,27 @@ export class Home extends React.Component<{}, HomeStates> {
 
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.setState({ clientOffset: this.container.getBoundingClientRect() })
+        NetworkManager.onStateChanged(this.updateNetworkState);
+        this.fs = await NetworkManager.getFs();
+        let root = this.fs.buildTree();
+        this.setState({ isLoading: false, currentDir: root });
+        this.updateDirData(root);
+    }
+
+    componentWillUnmount() {
+        NetworkManager.removeListener(this.updateNetworkState);
+    }
+
+    private updateNetworkState = () => {
+        this.setState({ ipfsReady: NetworkManager.ready });
+    }
+
+    private updateDirData(dir: IPFSDir) {
+        let data = dir.dirs.concat(dir.files as any[]);
+        console.log(this.state.data.length, data.length);
+        this.setState({ data });
     }
 
     container: HTMLDivElement;
@@ -131,7 +163,7 @@ export class Home extends React.Component<{}, HomeStates> {
 
         const newFolder = (
             <div>
-                <Input placeholder={lang.placeholders.folder} maxLength='64' onChange={e => this.setState({ newFolderName: e.target.value })} />
+                <Input placeholder={lang.placeholders.folder} maxLength='64' value={this.state.newFolderName} onChange={e => this.setState({ newFolderName: e.target.value })} />
                 <Row style={{ marginTop: 8 }} type='flex' justify='end'>
                     <Button icon='save' onClick={e => this.onFolderSave()} disabled={!(this.state.newFolderName && this.state.newFolderName.length > 0)}>{lang.buttons.save}</Button>
                 </Row>
@@ -143,10 +175,11 @@ export class Home extends React.Component<{}, HomeStates> {
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
-                            <Button className='action_button' icon='upload' type='primary' onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
-                            <Popover trigger='click' content={newFolder} placement='bottom'>
-                                <Button className='action_button' icon='folder-add'>{lang.buttons.newfolder}</Button>
+                            <Button className='action_button' icon='upload' type='primary' disabled={!this.state.ipfsReady} onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
+                            <Popover trigger='click' content={newFolder} placement='bottom' visible={this.state.popoverVisible}>
+                                <Button className='action_button' icon='folder-add' disabled={!this.state.ipfsReady} onClick={e => this.setState({ popoverVisible: true })} >{lang.buttons.newfolder}</Button>
                             </Popover>
+                            <Button style={{ display: `${this.state.selectedRowKeys.length > 0 ? undefined : 'none'}` }}>{lang.buttons.delete}</Button>
                         </div>
 
                         <div></div>
@@ -167,7 +200,7 @@ export class Home extends React.Component<{}, HomeStates> {
                 </Row>
 
                 <Row style={{ paddingTop: 72 }}>
-                    <Table rowSelection={rowSelection} columns={this.columns} dataSource={data} pagination={{ pageSize: 30 }} />
+                    <Table loading={this.state.isLoading} rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} pagination={{ pageSize: 30 }} rowKey='id' />
                 </Row>
 
                 <Modal

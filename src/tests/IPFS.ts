@@ -13,7 +13,7 @@ export async function testfs() {
 
 export async function testDirs() {
     let fs = await NetworkManager.getFs();
-    let dirs = fs.listDirs();
+    let dirs = fs.listAllItems();
     let dir: IPFSDir;
 
     if (dirs.length === 0) {
@@ -21,7 +21,7 @@ export async function testDirs() {
         console.log('mkdir: ', dir);
     }
 
-    dirs = fs.listDirs();
+    dirs = fs.listAllItems();
     console.log(dirs, dirs.length > 0);
 
     let checkdir = fs.getDir(dir ? dir.id : dirs[0].id);
