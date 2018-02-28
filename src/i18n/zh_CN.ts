@@ -33,10 +33,12 @@ const chinese_simpified = {
         uploadingsucceeded: '上传成功',
         uploadingfailed: '上传失败',
     },
-
-    titles: {
-
-    }
+    
+    tooltips: {
+        share: '分享',
+        rename: '重命名',
+        delete: '删除',
+    },
 }
 
 export default chinese_simpified;

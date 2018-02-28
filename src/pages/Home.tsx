@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Menu, Icon, Row, Button, Input, Table, Popover, Modal, Upload, message } from 'antd';
+import { Layout, Menu, Icon, Row, Button, Input, Table, Popover, Modal, Upload, Tooltip, message } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 const Dragger = Upload.Dragger;
 const Search = Input.Search;
@@ -38,13 +38,23 @@ export class Home extends React.Component<{}, HomeStates> {
         dataIndex: 'name',
         width: '80%',
         sorter: (a, b) => a.name > b.name ? 1 : 0,
-        render: (text: string, record: any, index: number) => { return (<FileItem name={text} type={record.type} mime={record.mime} data={record} onClick={item => this.onItemClicked(item)} />) },
+        render: (text: string, record: any, index: number) => {
+            return (<FileItem name={text} type={record.type} mime={record.mime} data={record} onClick={item => this.onItemClicked(item)} />);
+        },
     }, {
         title: lang.table.actions,
         dataIndex: '',
         width: '20%',
         className: 'center-text',
-        render: (text: string, record: any, index: number) => { return (<div></div>) }
+        render: (text: string, record: any, index: number) => {
+            return (
+                <div>
+                    <Tooltip title={lang.tooltips.share}><Icon className='action_icon' type='share-alt' /></Tooltip>
+                    <Tooltip title={lang.tooltips.rename}><Icon className='action_icon' type='form' /></Tooltip>
+                    <Tooltip title={lang.tooltips.delete}><Icon className='action_icon' type='delete' /></Tooltip>
+                </div>
+            );
+        },
     }];
 
     readonly uploaderProps = {

@@ -36,6 +36,12 @@ type Language = {
         uploadingsucceeded: string;
         uploadingfailed: string;
     },
+
+    tooltips: {
+        share: string;
+        rename: string;
+        delete: string;
+    }
 }
 
 export const langauges = {

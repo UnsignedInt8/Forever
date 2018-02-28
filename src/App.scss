@@ -17,3 +17,12 @@
 .center_text {
   text-align: center;
 }
+
+.action_icon {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.action_icon :hover {
+  color: 'deepskyblue';
+}

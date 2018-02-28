@@ -34,9 +34,11 @@ const english = {
         uploadingfailed: 'file upload failed.',
     },
 
-    titles: {
-
-    }
+    tooltips: {
+        share: 'Share',
+        rename: 'Rename',
+        delete: 'Delete',
+    },
 };
 
 export default english;
