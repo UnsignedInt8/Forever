@@ -5,6 +5,7 @@ const Dragger = Upload.Dragger;
 const Search = Input.Search;
 import lang from '../i18n';
 import NetworkManager from '../p2p/NetworkManager';
+import { FileItem } from '../components/FileItem';
 
 
 const data = [];
@@ -12,8 +13,8 @@ for (let i = 0; i < 46; i++) {
     data.push({
         key: i,
         name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`,
+        type: i % 5 === 0 ? 'dir' : 'file',
+        mime: ['video/', 'audio/', 'application/pdf', 'application/msword', 'text/', 'image/'][i % 6],
     });
 }
 
@@ -34,7 +35,7 @@ export class Home extends React.Component<{}, HomeStates> {
         dataIndex: 'name',
         width: '80%',
         sorter: (a, b) => a.name > b.name ? 1 : 0,
-        render: (text: string, record: any, index: number) => { return (<div>{text}</div>) }
+        render: (text: string, record: any, index: number) => { return (<FileItem name={text} type={record.type} mime={record.mime} />) },
     }, {
         title: lang.table.actions,
         dataIndex: '',
@@ -51,10 +52,10 @@ export class Home extends React.Component<{}, HomeStates> {
 
             switch (status) {
                 case 'done':
-                    message.success(`${info.file.name} file uploaded successfully.`);
+                    message.success(`${info.file.name} ${lang.messages.uploadingsucceeded}`);
                     break;
                 case 'error':
-                    message.error(`${info.file.name} file upload failed.`);
+                    message.error(`${info.file.name} ${lang.messages.uploadingfailed}`);
                     break;
                 default:
                     console.log(status, info.file, info.fileList);

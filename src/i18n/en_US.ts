@@ -28,6 +28,8 @@ const english = {
 
     messages: {
         dragfiles: 'Click or drag file to this area',
+        uploadingsucceeded: 'file uploaded successfully.',
+        uploadingfailed: 'file upload failed.',
     },
 
     titles: {

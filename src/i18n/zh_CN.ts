@@ -27,7 +27,9 @@ const chinese_simpified = {
     },
 
     messages: {
-        dragfiles: '拖拽文件到此处'
+        dragfiles: '拖拽文件到此处',
+        uploadingsucceeded: '上传成功',
+        uploadingfailed: '上传失败',
     },
 
     titles: {

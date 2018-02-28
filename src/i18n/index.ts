@@ -31,6 +31,8 @@ type Language = {
 
     messages: {
         dragfiles: string;
+        uploadingsucceeded: string;
+        uploadingfailed: string;
     },
 }
 
