@@ -14,6 +14,8 @@ const chinese_simpified = {
         cancel: '取消',
         confirm: '确认',
         save: '保存',
+        delete: '删除',
+        rename: '重命名',
     },
 
     table: {

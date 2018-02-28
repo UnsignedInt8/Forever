@@ -14,6 +14,8 @@ const english = {
         cancel: 'Cancel',
         confirm: 'Confirm',
         save: 'Save',
+        delete: 'Delete',
+        rename: 'Rename',
     },
 
     table: {

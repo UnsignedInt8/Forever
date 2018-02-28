@@ -6,6 +6,8 @@ const Search = Input.Search;
 import lang from '../i18n';
 import NetworkManager from '../p2p/NetworkManager';
 import { FileItem } from '../components/FileItem';
+import IPFSDir from '../models/Dir';
+import IPFSFile from '../models/File';
 
 
 const data = [];
@@ -24,6 +26,7 @@ interface HomeStates {
     clientOffset?: ClientRect;
     newFolderName?: string;
     openUploadModal?: boolean;
+    currentDir?: IPFSDir;
 }
 
 export class Home extends React.Component<{}, HomeStates> {
@@ -35,11 +38,12 @@ export class Home extends React.Component<{}, HomeStates> {
         dataIndex: 'name',
         width: '80%',
         sorter: (a, b) => a.name > b.name ? 1 : 0,
-        render: (text: string, record: any, index: number) => { return (<FileItem name={text} type={record.type} mime={record.mime} />) },
+        render: (text: string, record: any, index: number) => { return (<FileItem name={text} type={record.type} mime={record.mime} data={record} onClick={item => this.onItemClicked(item)} />) },
     }, {
         title: lang.table.actions,
         dataIndex: '',
         width: '20%',
+        className: 'center-text',
         render: (text: string, record: any, index: number) => { return (<div></div>) }
     }];
 
@@ -87,6 +91,18 @@ export class Home extends React.Component<{}, HomeStates> {
 
     onFolderSave() {
         if (!this.state.newFolderName) return;
+
+    }
+
+    onItemClicked(item: IPFSDir | IPFSFile) {
+
+    }
+
+    onItemRename(item: IPFSDir | IPFSFile) {
+
+    }
+
+    onItemDelete(item: IPFSDir | IPFSFile) {
 
     }
 

@@ -28,13 +28,12 @@ export class FileItem extends React.Component<FileItemProps, any>{
     }
 
     render() {
-
         let icon = this.props.mime && this.props.type === 'file' ? (mimes[this.props.mime] || (mimes[this.props.mime.split('/')[0] + '/'] || mimes['file'])) : mimes['folder'];
 
         return (
             <div>
                 <Icon type={icon.icon} style={{ fontSize: 22, marginTop: 4, display: 'inline-block', color: icon.color }} />
-                <div onClick={this.onItemClick} style={{ display: 'inline-block', marginLeft: 12, fontSize: 14, marginTop: 4, position: 'absolute', cursor: 'pointer', }}>{this.props.name}</div>
+                <div onClick={() => this.onItemClick()} style={{ display: 'inline-block', marginLeft: 12, fontSize: 14, marginTop: 4, position: 'absolute', cursor: 'pointer', }}>{this.props.name}</div>
             </div>
         );
     }

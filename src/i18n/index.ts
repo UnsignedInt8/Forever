@@ -17,6 +17,8 @@ type Language = {
         cancel: string;
         confirm: string;
         save: string;
+        delete: string;
+        rename: string;
     },
 
     table: {
