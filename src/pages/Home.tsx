@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Menu, Icon, Row, Button, Input, Table, Popover, Modal, Upload, Tooltip, message } from 'antd';
+import { Layout, Menu, Icon, Row, Button, Input, Table, Popover, Modal, Upload, Tooltip, message, Breadcrumb } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 const Dragger = Upload.Dragger;
 const Search = Input.Search;
@@ -140,25 +140,33 @@ export class Home extends React.Component<{}, HomeStates> {
 
         return (
             <div ref={e => this.container = e} style={{}}>
-                <Row style={{ padding: '10px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} type='flex' justify='space-between'>
-                    <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
-                        <Button className='action_button' icon='upload' type='primary' onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
-                        <Popover trigger='click' content={newFolder} placement='bottom'>
-                            <Button className='action_button' icon='folder-add'>{lang.buttons.newfolder}</Button>
-                        </Popover>
-                    </div>
+                <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
+                    <Row style={{}} type='flex' justify='space-between'>
+                        <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
+                            <Button className='action_button' icon='upload' type='primary' onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
+                            <Popover trigger='click' content={newFolder} placement='bottom'>
+                                <Button className='action_button' icon='folder-add'>{lang.buttons.newfolder}</Button>
+                            </Popover>
+                        </div>
 
-                    <div></div>
+                        <div></div>
 
-                    <Search
-                        className='search_box'
-                        placeholder={lang.placeholders.search}
-                        onSearch={value => console.log(value)}
-                        style={{ maxWidth: 200, }}
-                    />
+                        <Search
+                            className='search_box'
+                            placeholder={lang.placeholders.search}
+                            onSearch={value => console.log(value)}
+                            style={{ maxWidth: 200, }}
+                        />
+                    </Row>
+
+                    <Row style={{ marginTop: 4, paddingLeft: 0, fontSize: 12 }}>
+                        <Breadcrumb separator='>'>
+                            <Breadcrumb.Item>All Files</Breadcrumb.Item>
+                        </Breadcrumb>
+                    </Row>
                 </Row>
 
-                <Row style={{ paddingTop: 52 }}>
+                <Row style={{ paddingTop: 72 }}>
                     <Table rowSelection={rowSelection} columns={this.columns} dataSource={data} pagination={{ pageSize: 30 }} />
                 </Row>
 

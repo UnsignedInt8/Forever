@@ -20,7 +20,7 @@ class App extends React.Component<{}, HomeStates> {
   constructor(props: any, ctx: any) {
     super(props, ctx);
     this.state = { contentMarginLeft: 200 };
-    NetworkManager.init();
+    // NetworkManager.init();
   }
 
   render() {
