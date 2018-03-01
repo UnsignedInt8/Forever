@@ -21,6 +21,7 @@ const chinese_simpified = {
     table: {
         name: '文件名',
         actions: '操作',
+        size: '文件大小',
     },
 
     placeholders: {

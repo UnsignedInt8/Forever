@@ -24,6 +24,7 @@ type Language = {
     table: {
         name: string;
         actions: string;
+        size: string;
     },
 
     placeholders: {

@@ -21,6 +21,7 @@ const english = {
     table: {
         name: 'File name',
         actions: 'Actions',
+        size: 'Size',
     },
 
     placeholders: {
