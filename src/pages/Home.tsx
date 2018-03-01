@@ -133,7 +133,7 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ clientOffset: this.container.getBoundingClientRect() })
         NetworkManager.onStateChanged(this.updateNetworkState);
         this.fs = await NetworkManager.getFs();
-        let root = this.fs.buildTree();
+        let root = this.fs.getRootDir();
         this.setState({ isLoading: false, currentDir: root });
         this.updateDirData(root);
     }
@@ -148,7 +148,6 @@ export class Home extends React.Component<{}, HomeStates> {
 
     private updateDirData(dir: IPFSDir) {
         let data = dir.dirs.concat(dir.files as any[]);
-        console.log(this.state.data.length, data.length);
         this.setState({ data });
     }
 

@@ -20,8 +20,9 @@ export default class FileSystem extends Event {
     }
 
     async load() {
-        this.db = await this.orbit.docs(this.address, { indexBy: 'id', write: ['*'] });
+        this.db = await this.orbit.docs(this.address, { indexBy: 'id', });
         await this.db.load();
+
         console.log(this.db.address, this.db.address.toString());
         this.db.events.on('replicated', (address) => this.trigger('replicated', address));
         this.db.events.on('replicate', (address) => this.trigger('replicate', address));
@@ -49,11 +50,14 @@ export default class FileSystem extends Event {
             type: 'dir',
         };
 
-        let hash = await this.db.put(dir);
-        if (!hash) return null;
-
         let parent = this.getDir(parentId);
-        if (!parent) return dir;
+
+        if (!parent) {
+            dir = await this.updateDir(dir);
+            console.log('create no parent dir', dir);
+            return null
+        };
+
         parent.dirs.unshift(dir);
         await this.updateDir(parent);
 
@@ -70,6 +74,7 @@ export default class FileSystem extends Event {
     }
 
     async updateDir(dir: IPFSDir) {
+        console.log('update dir', dir);
         let hash = await this.db.put(dir);
         return hash ? dir : null;
     }
@@ -78,32 +83,10 @@ export default class FileSystem extends Event {
         return this.db.query(item => item) as (IPFSDir | IPFSFile)[];
     }
 
-    buildTree() {
-        let items = this.listAllItems();
-        let rootDir = items.filter(f => f.id === 'root')[0] as IPFSDir;
-        let dirsMap = new Map<string, (IPFSDir | IPFSFile)>();
-        rootDir.dirs = rootDir.dirs || [];
-
-        items.forEach(item => dirsMap.set(item.id, item));
-        items.forEach(item => {
-            if (item.id === 'root') return;
-
-            let dir = item.type === 'dir' ? item as IPFSDir : null;
-            let file = item.type === 'file' ? item as IPFSFile : null;
-
-            if (file) {
-                let parentDir = dirsMap.get(file.dirId || 'root') as IPFSDir;
-                parentDir.files.push(file);
-                return;
-            }
-
-            if (dir) {
-                let parentDir = dirsMap.get(dir.parentId || 'root') as IPFSDir;
-                parentDir.dirs.push(dir);
-            }
-        });
-
-        return rootDir;
+    getRootDir() {
+        let root = (this.db.get('root') as IPFSDir[])[0];
+        console.log('root', root);
+        return root;
     }
 
     async addFile(file: File, dirId: string, onProgress?: (offset: number, total: number) => void) {
