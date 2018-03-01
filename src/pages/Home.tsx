@@ -10,6 +10,7 @@ import { FileItem } from '../components/FileItem';
 import IPFSDir from '../models/Dir';
 import IPFSFile from '../models/File';
 import FileSystem from '../p2p/FileSystem';
+import StorageItem from '../models/StorageItem';
 
 
 // const data2 = [];
@@ -66,10 +67,10 @@ export class Home extends React.Component<{}, HomeStates> {
             dataIndex: '',
             width: '15%',
             className: 'center-text',
-            render: (text: string, record: any, index: number) => {
+            render: (text: string, record: StorageItem, index: number) => {
                 return (
                     <div>
-                        <Tooltip title={lang.tooltips.share}><Icon className='action_icon' type='share-alt' /></Tooltip>
+                        <Tooltip title={lang.tooltips.share}><Icon className='action_icon' type='share-alt' style={{ color: `${record.type === 'file' ? undefined : 'lightgrey'}` }} /></Tooltip>
                         <Tooltip title={lang.tooltips.rename}><Icon className='action_icon' type='form' /></Tooltip>
                         <Tooltip title={lang.tooltips.delete}><Icon className='action_icon' type='delete' /></Tooltip>
                     </div>
@@ -111,7 +112,7 @@ export class Home extends React.Component<{}, HomeStates> {
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-        this.state = { selectedRowKeys: [], data: [], isLoading: true };
+        this.state = { selectedRowKeys: [], data: [], isLoading: true, };
         window.onresize = () => { this.setState({ clientOffset: this.container.getBoundingClientRect() }) };
     }
 
@@ -141,18 +142,22 @@ export class Home extends React.Component<{}, HomeStates> {
 
     }
 
+    onItemShare(item: IPFSFile) {
+
+    }
+
     onSelectedRowDelete() {
         if (!this.state.selectedRowKeys || this.state.selectedRowKeys.length === 0) return;
 
         this.state.selectedRowKeys.forEach(id => {
             let index = this.state.currentDir.dirs.findIndex(i => i.id === id);
             if (index > -1) this.state.currentDir.dirs.splice(index, 1);
-            
+
             index = this.state.currentDir.files.findIndex(i => i.id === id);
             if (index > -1) this.state.currentDir.files.splice(index, 1);
         });
 
-        this.setState({ selectedPopVisible: false });
+        this.setState({ selectedPopVisible: false, selectedRowKeys: [] });
         this.fs.updateDir(this.state.currentDir);
         this.refreshCurrentDir();
     }
@@ -175,9 +180,16 @@ export class Home extends React.Component<{}, HomeStates> {
 
     private async refreshCurrentDir() {
         this.setState({ isLoading: true });
-        let dir = await this.fs.getDir(this.state.currentDir.id)
+        let dir = await this.fs.getDir(this.state.currentDir.id);
         let data = dir.dirs.concat(dir.files as any[]);
-        this.setState({ data, isLoading: false });
+        this.setState({ data, isLoading: false, currentDir: dir });
+    }
+
+    private filterItems(keywords: string) {
+        let dir = this.state.currentDir;
+        keywords = keywords.toLowerCase();
+        let data = dir.dirs.concat(dir.files as any[]).filter(i => keywords ? i.title.toLowerCase().includes(keywords) : true);
+        this.setState({ data });
     }
 
     container: HTMLDivElement;
@@ -224,7 +236,7 @@ export class Home extends React.Component<{}, HomeStates> {
                         <Search
                             className='search_box'
                             placeholder={lang.placeholders.search}
-                            onSearch={value => console.log(value)}
+                            onChange={e => this.filterItems(e.target.value)}
                             style={{ maxWidth: 200, }}
                         />
                     </Row>
