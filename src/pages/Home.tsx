@@ -26,7 +26,8 @@ interface HomeStates {
     clientOffset?: ClientRect;
     newFolderName?: string;
     openUploadModal?: boolean;
-    popoverVisible?: boolean;
+    folderPopVisible?: boolean;
+    selectedPopVisible?: boolean;
 
     ipfsReady?: boolean;
     isLoading: boolean;
@@ -119,7 +120,7 @@ export class Home extends React.Component<{}, HomeStates> {
     }
 
     async onFolderSave() {
-        this.setState({ popoverVisible: false, newFolderName: '' });
+        this.setState({ folderPopVisible: false, newFolderName: '' });
 
         if (!this.state.newFolderName) return;
         if (!this.fs) return;
@@ -138,6 +139,22 @@ export class Home extends React.Component<{}, HomeStates> {
 
     onItemDelete(item: IPFSDir | IPFSFile) {
 
+    }
+
+    onSelectedRowDelete() {
+        if (!this.state.selectedRowKeys || this.state.selectedRowKeys.length === 0) return;
+
+        this.state.selectedRowKeys.forEach(id => {
+            let index = this.state.currentDir.dirs.findIndex(i => i.id === id);
+            if (index > -1) this.state.currentDir.dirs.splice(index, 1);
+            
+            index = this.state.currentDir.files.findIndex(i => i.id === id);
+            if (index > -1) this.state.currentDir.files.splice(index, 1);
+        });
+
+        this.setState({ selectedPopVisible: false });
+        this.fs.updateDir(this.state.currentDir);
+        this.refreshCurrentDir();
     }
 
     async componentDidMount() {
@@ -181,16 +198,25 @@ export class Home extends React.Component<{}, HomeStates> {
             </div>
         );
 
+        const deleteRows = (
+            <div>
+                <div style={{ color: 'red' }}><Icon type="exclamation-circle" /> {lang.messages.areyousure}</div>
+                <Button type='danger' style={{ width: '100%', marginTop: 8 }} onClick={e => this.onSelectedRowDelete()}>{lang.buttons.yes}</Button>
+            </div>
+        );
+
         return (
             <div ref={e => this.container = e} style={{}}>
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
                             <Button className='action_button' icon='upload' type='primary' disabled={!this.state.ipfsReady} onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
-                            <Popover trigger='click' content={newFolder} placement='bottom' visible={this.state.popoverVisible}>
-                                <Button className='action_button' icon='folder-add' disabled={!this.state.ipfsReady} onClick={e => this.setState({ popoverVisible: true })} >{lang.buttons.newfolder}</Button>
+                            <Popover trigger='click' content={newFolder} placement='bottom' visible={this.state.folderPopVisible}>
+                                <Button className='action_button' icon='folder-add' disabled={!this.state.ipfsReady} onClick={e => this.setState({ folderPopVisible: !this.state.folderPopVisible })} >{lang.buttons.newfolder}</Button>
                             </Popover>
-                            <Button style={{ display: `${this.state.selectedRowKeys.length > 0 ? undefined : 'none'}` }}>{lang.buttons.delete}</Button>
+                            <Popover trigger='click' content={deleteRows} placement='bottom' visible={this.state.selectedPopVisible}>
+                                <Button className='action_button' icon='delete' style={{ display: `${this.state.selectedRowKeys.length > 0 ? '' : 'none'}` }} onClick={e => this.setState({ selectedPopVisible: !this.state.selectedPopVisible })}>{lang.buttons.delete}</Button>
+                            </Popover>
                         </div>
 
                         <div></div>

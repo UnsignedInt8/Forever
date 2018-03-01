@@ -16,6 +16,7 @@ const english = {
         save: 'Save',
         delete: 'Delete',
         rename: 'Rename',
+        yes: 'Yes',
     },
 
     table: {
@@ -33,6 +34,7 @@ const english = {
         dragfiles: 'Click or drag file to this area',
         uploadingsucceeded: 'file uploaded successfully.',
         uploadingfailed: 'file upload failed.',
+        areyousure: 'Are you sure',
     },
 
     tooltips: {

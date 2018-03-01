@@ -16,6 +16,7 @@ const chinese_simpified = {
         save: '保存',
         delete: '删除',
         rename: '重命名',
+        yes: '确定',
     },
 
     table: {
@@ -33,6 +34,7 @@ const chinese_simpified = {
         dragfiles: '拖拽文件到此处',
         uploadingsucceeded: '上传成功',
         uploadingfailed: '上传失败',
+        areyousure: '是否确定？',
     },
     
     tooltips: {

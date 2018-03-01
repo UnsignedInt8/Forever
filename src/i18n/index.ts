@@ -19,6 +19,7 @@ type Language = {
         save: string;
         delete: string;
         rename: string;
+        yes: string;
     },
 
     table: {
@@ -36,6 +37,7 @@ type Language = {
         dragfiles: string;
         uploadingsucceeded: string;
         uploadingfailed: string;
+        areyousure: string;
     },
 
     tooltips: {
