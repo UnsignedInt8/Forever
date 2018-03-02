@@ -29,13 +29,14 @@ const english = {
         folder: 'Folder name',
         search: 'Search',
         share: 'Share',
+        rename: 'Rename',
     },
 
     messages: {
         dragfiles: 'Click or drag file to this area',
         uploadingsucceeded: 'uploaded successfully.',
         uploadingfailed: 'uploading failed.',
-        areyousure: 'Are you sure',
+        areyousure: 'Are you sure?',
         copied: 'Copied to clipboard',
     },
 

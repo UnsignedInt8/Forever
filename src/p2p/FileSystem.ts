@@ -50,30 +50,33 @@ export default class FileSystem extends Event {
             type: 'dir',
         };
 
-        let parent = this.getDir(parentId);
-
-        if (!parent) {
-            dir = await this.updateDir(dir);
-            return null
-        };
-
-        parent.dirs.unshift(dir);
-        await this.updateDir(parent);
-
+        dir = await this.updateDir(dir);
         return dir;
     }
 
-    // async rmdir(id: string) {
-    //     return await this.db.del(id) ? true : false;
-    // }
+    async rmdir(id: string) {
+        try {
+            let r = await this.db.del(id)
+            return true;
+        } catch (ex) {
+            console.log(ex);
+            return false;
+        }
+    }
 
     getDir(id: string): IPFSDir {
         let items = this.db.get(id);
-        return items && items instanceof Array ? items[0] : null;
+        let dir = items && items instanceof Array ? items[0] : null;
+        if (!dir) return;
+
+        dir.dirs = this.db.query(item => item.type === 'dir' && item.parentId === dir.id) || [];
+        return dir
     }
 
     async updateDir(dir: IPFSDir) {
-        let hash = await this.db.put(dir);
+        let dir2 = Object.assign({}, dir);
+        dir2.dirs = [];
+        let hash = await this.db.put(dir2);
         return hash ? dir : null;
     }
 
@@ -82,7 +85,7 @@ export default class FileSystem extends Event {
     }
 
     getRootDir() {
-        let root = (this.db.get('root') as IPFSDir[])[0];
+        let root = this.getDir('root');
         return root;
     }
 

@@ -32,6 +32,7 @@ type Language = {
         folder: string;
         search: string;
         share: string;
+        rename: string,
     },
 
     messages: {

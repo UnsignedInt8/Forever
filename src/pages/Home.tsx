@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Layout, Menu, Icon, Row, Col, Button, Input, Table, Popover, Modal, Upload, Tooltip, message, Breadcrumb } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
+const confirm = Modal.confirm;
 const Dragger = Upload.Dragger;
 const Search = Input.Search;
 import * as filesize from 'filesize';
@@ -29,6 +30,7 @@ interface HomeStates {
     selectedRowKeys: string[];
     data: (IPFSDir | IPFSFile)[];
     selectedItem?: IPFSDir | IPFSFile;
+    newItemName?: string;
 }
 
 export class Home extends React.Component<{}, HomeStates> {
@@ -61,11 +63,24 @@ export class Home extends React.Component<{}, HomeStates> {
             width: '15%',
             className: 'center-text',
             render: (text: string, record: any, index: number) => {
+                let deleteItem = () => confirm({
+                    title: `${lang.tooltips.delete} ${record.title}`,
+                    content: '',
+                    okText: lang.buttons.yes,
+                    okType: 'danger',
+                    cancelText: lang.buttons.cancel,
+                    onOk: () => {
+                        this.onItemDelete(record)
+                    },
+                    onCancel: () => {
+                    },
+                });
+
                 return (
                     <div>
                         <Tooltip title={lang.tooltips.share}><Icon onClick={e => this.onItemShare(record)} className='action_icon' type='share-alt' style={{ color: `${record.type === 'file' ? undefined : 'lightgrey'}` }} /></Tooltip>
-                        <Tooltip title={lang.tooltips.rename}><Icon onClick={e => this.onItemRename(record)} className='action_icon' type='form' /></Tooltip>
-                        <Tooltip title={lang.tooltips.delete}><Icon onClick={e => this.onItemDelete(record)} className='action_icon' type='delete' /></Tooltip>
+                        <Tooltip title={lang.tooltips.rename}><Icon onClick={e => this.setState({ openRenameModal: true, selectedItem: record })} className='action_icon' type='form' /></Tooltip>
+                        <Tooltip title={lang.tooltips.delete}><Icon onClick={e => deleteItem()} className='action_icon' type='delete' /></Tooltip>
                     </div>
                 );
             },
@@ -128,12 +143,30 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ selectedItem: item });
     }
 
-    onItemRename(item: IPFSDir | IPFSFile) {
-        this.setState({ selectedItem: item });
+    async onItemRename(item: IPFSDir | IPFSFile) {
+        if (!this.state.newItemName) return;
+        this.state.selectedItem.title = this.state.newItemName;
+
+        if (this.state.selectedItem.type === 'dir') {
+            await this.fs.updateDir(this.state.selectedItem as IPFSDir);
+        }
+        else {
+            this.fs.updateDir(this.state.currentDir);
+        }
+
+        this.setState({ openRenameModal: false, });
     }
 
-    onItemDelete(item: IPFSDir | IPFSFile) {
-        this.setState({ selectedItem: item });
+    async onItemDelete(item: IPFSDir | IPFSFile) {
+        if (item.type === 'dir') {
+            return await this.fs.rmdir(item.id);
+        }
+
+        let index = this.state.currentDir.files.findIndex(i => i.id === item.id);
+        if (index === -1) return;
+        this.state.currentDir.files.splice(index, 1);
+        await this.fs.updateDir(this.state.currentDir);
+        await this.refreshCurrentDir();
     }
 
     onItemShare(item: IPFSFile) {
@@ -141,20 +174,26 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ selectedItem: item, openShareModal: true });
     }
 
-    onSelectedRowDelete() {
+    async onSelectedRowDelete() {
         if (!this.state.selectedRowKeys || this.state.selectedRowKeys.length === 0) return;
 
-        this.state.selectedRowKeys.forEach(id => {
+        this.setState({ isLoading: true });
+
+        for (let id of this.state.selectedRowKeys) {
             let index = this.state.currentDir.dirs.findIndex(i => i.id === id);
-            if (index > -1) this.state.currentDir.dirs.splice(index, 1);
+            if (index > -1) {
+                this.state.currentDir.dirs.splice(index, 1);
+                await this.fs.rmdir(id);
+                continue;
+            }
 
             index = this.state.currentDir.files.findIndex(i => i.id === id);
             if (index > -1) this.state.currentDir.files.splice(index, 1);
-        });
+        }
 
-        this.setState({ selectedPopVisible: false, selectedRowKeys: [] });
-        this.fs.updateDir(this.state.currentDir);
-        this.refreshCurrentDir();
+        this.setState({ selectedPopVisible: false, selectedRowKeys: [], isLoading: false });
+        await this.fs.updateDir(this.state.currentDir);
+        await this.refreshCurrentDir();
     }
 
     async componentDidMount() {
@@ -272,7 +311,7 @@ export class Home extends React.Component<{}, HomeStates> {
 
                         <Row style={{ marginBottom: 12 }}>
                             <Col span={22}>
-                                <Input id='ipfs_link' value={`ipfs://${selectedHash}`} style={{ display: 'inline-block' }} />
+                                <Input id='ipfs_link' readOnly value={`ipfs://${selectedHash}`} style={{ display: 'inline-block' }} />
                             </Col>
                             <Col span={2} style={{ marginLeft: 0, display: 'flex', justifyContent: 'center' }}>
                                 <Button className='share_btn' icon='copy' data-clipboard-target='#ipfs_link' />
@@ -281,13 +320,22 @@ export class Home extends React.Component<{}, HomeStates> {
 
                         <Row>
                             <Col span={22}>
-                                <Input id='https_link' value={`https://ipfs.io/ipfs/${selectedHash}`} style={{ display: 'inline-block' }} />
+                                <Input id='https_link' readOnly value={`https://ipfs.io/ipfs/${selectedHash}`} style={{ display: 'inline-block' }} />
                             </Col>
                             <Col span={2} style={{ marginLeft: 0, display: 'flex', justifyContent: 'center' }}>
                                 <Button className='share_btn' icon='copy' data-clipboard-target='#https_link' />
                             </Col>
                         </Row>
                     </div>
+                </Modal>
+
+                <Modal
+                    title={`${lang.placeholders.rename} ${this.state.selectedItem ? this.state.selectedItem.title : ''}`}
+                    visible={this.state.openRenameModal}
+                    onOk={e => this.onItemRename(this.state.selectedItem)}
+                    onCancel={e => this.setState({ openRenameModal: false })}
+                >
+                    <Input onChange={e => this.setState({ newItemName: e.target.value })} />
                 </Modal>
             </div>
         );

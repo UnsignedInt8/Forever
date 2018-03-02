@@ -29,6 +29,7 @@ const chinese_simpified = {
         folder: '文件夹名',
         search: '搜索',
         share: '分享',
+        rename: '重命名',
     },
 
     messages: {
