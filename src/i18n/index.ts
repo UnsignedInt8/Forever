@@ -31,6 +31,7 @@ type Language = {
     placeholders: {
         folder: string;
         search: string;
+        share: string;
     },
 
     messages: {
@@ -38,6 +39,7 @@ type Language = {
         uploadingsucceeded: string;
         uploadingfailed: string;
         areyousure: string;
+        copied: string;
     },
 
     tooltips: {

@@ -5,12 +5,14 @@
   "dependencies": {
     "@types/filesize": "^3.6.0",
     "antd": "^3.2.2",
+    "clipboard": "^2.0.0",
     "ipfs": "^0.27.7",
     "orbit-db": "^0.19.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-feather": "^1.0.8",
     "react-router-dom": "^4.2.2",
+    "react-scripts": "^1.1.1",
     "react-scripts-ts-antd": "2.13.2",
     "uuid": "^3.2.1"
   },
@@ -26,6 +28,7 @@
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
     "@types/react-router-dom": "^4.2.4",
+    "@types/clipboard": "^1.5.36",
     "typescript": "^2.7.2"
   }
 }

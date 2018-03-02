@@ -28,6 +28,7 @@ const chinese_simpified = {
     placeholders: {
         folder: '文件夹名',
         search: '搜索',
+        share: '分享',
     },
 
     messages: {
@@ -35,6 +36,7 @@ const chinese_simpified = {
         uploadingsucceeded: '上传成功',
         uploadingfailed: '上传失败',
         areyousure: '是否确定？',
+        copied: '已复制到剪贴板',
     },
     
     tooltips: {

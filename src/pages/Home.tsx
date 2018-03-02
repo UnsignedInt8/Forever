@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Menu, Icon, Row, Button, Input, Table, Popover, Modal, Upload, Tooltip, message, Breadcrumb } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Input, Table, Popover, Modal, Upload, Tooltip, message, Breadcrumb } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 const Dragger = Upload.Dragger;
 const Search = Input.Search;
@@ -11,22 +11,14 @@ import IPFSDir from '../models/Dir';
 import IPFSFile from '../models/File';
 import FileSystem from '../p2p/FileSystem';
 import StorageItem from '../models/StorageItem';
-
-
-// const data2 = [];
-// for (let i = 0; i < 46; i++) {
-//     data2.push({
-//         key: i,
-//         title: `Edward King ${i}`,
-//         type: i % 5 === 0 ? 'dir' : 'file',
-//         mime: ['video/', 'audio/', 'application/pdf', 'application/msword', 'text/', 'image/'][i % 6],
-//     });
-// }
+import * as Clipboard from 'clipboard';
 
 interface HomeStates {
     clientOffset?: ClientRect;
     newFolderName?: string;
     openUploadModal?: boolean;
+    openShareModal?: boolean;
+    openRenameModal?: boolean;
     folderPopVisible?: boolean;
     selectedPopVisible?: boolean;
 
@@ -36,6 +28,7 @@ interface HomeStates {
     currentDir?: IPFSDir;
     selectedRowKeys: string[];
     data: (IPFSDir | IPFSFile)[];
+    selectedItem?: IPFSDir | IPFSFile;
 }
 
 export class Home extends React.Component<{}, HomeStates> {
@@ -67,12 +60,12 @@ export class Home extends React.Component<{}, HomeStates> {
             dataIndex: '',
             width: '15%',
             className: 'center-text',
-            render: (text: string, record: StorageItem, index: number) => {
+            render: (text: string, record: any, index: number) => {
                 return (
                     <div>
-                        <Tooltip title={lang.tooltips.share}><Icon className='action_icon' type='share-alt' style={{ color: `${record.type === 'file' ? undefined : 'lightgrey'}` }} /></Tooltip>
-                        <Tooltip title={lang.tooltips.rename}><Icon className='action_icon' type='form' /></Tooltip>
-                        <Tooltip title={lang.tooltips.delete}><Icon className='action_icon' type='delete' /></Tooltip>
+                        <Tooltip title={lang.tooltips.share}><Icon onClick={e => this.onItemShare(record)} className='action_icon' type='share-alt' style={{ color: `${record.type === 'file' ? undefined : 'lightgrey'}` }} /></Tooltip>
+                        <Tooltip title={lang.tooltips.rename}><Icon onClick={e => this.onItemRename(record)} className='action_icon' type='form' /></Tooltip>
+                        <Tooltip title={lang.tooltips.delete}><Icon onClick={e => this.onItemDelete(record)} className='action_icon' type='delete' /></Tooltip>
                     </div>
                 );
             },
@@ -114,6 +107,7 @@ export class Home extends React.Component<{}, HomeStates> {
         super(props, ctx);
         this.state = { selectedRowKeys: [], data: [], isLoading: true, };
         window.onresize = () => { this.setState({ clientOffset: this.container.getBoundingClientRect() }) };
+        (new Clipboard('.share_btn')).on('success', () => { message.success(lang.messages.copied) });
     }
 
     onSelectChange = (selectedRowKeys) => {
@@ -131,19 +125,20 @@ export class Home extends React.Component<{}, HomeStates> {
     }
 
     onItemClicked(item: IPFSDir | IPFSFile) {
-
+        this.setState({ selectedItem: item });
     }
 
     onItemRename(item: IPFSDir | IPFSFile) {
-
+        this.setState({ selectedItem: item });
     }
 
     onItemDelete(item: IPFSDir | IPFSFile) {
-
+        this.setState({ selectedItem: item });
     }
 
     onItemShare(item: IPFSFile) {
-
+        if (item.type === 'dir') return;
+        this.setState({ selectedItem: item, openShareModal: true });
     }
 
     onSelectedRowDelete() {
@@ -195,6 +190,7 @@ export class Home extends React.Component<{}, HomeStates> {
     container: HTMLDivElement;
 
     render() {
+        const selectedHash = this.state.selectedItem ? this.state.selectedItem.id : '';
         const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
@@ -265,6 +261,33 @@ export class Home extends React.Component<{}, HomeStates> {
                         </p>
                         <p className="ant-upload-text">{lang.messages.dragfiles}</p>
                     </Dragger>
+                </Modal>
+
+                <Modal visible={this.state.openShareModal} footer={null} closable={false} onCancel={e => this.setState({ openShareModal: false })}>
+                    <div>
+                        <div style={{ fontSize: 18, marginBottom: 12, position: 'relative' }} >
+                            <Icon type='share-alt' style={{ marginRight: 8, fontSize: 24 }} />
+                            <div style={{ position: 'absolute', display: 'inline-block', top: -1 }}>{`${lang.placeholders.share} ${this.state.selectedItem ? this.state.selectedItem.title : ''}`}</div>
+                        </div>
+
+                        <Row style={{ marginBottom: 12 }}>
+                            <Col span={22}>
+                                <Input id='ipfs_link' value={`ipfs://${selectedHash}`} style={{ display: 'inline-block' }} />
+                            </Col>
+                            <Col span={2} style={{ marginLeft: 0, display: 'flex', justifyContent: 'center' }}>
+                                <Button className='share_btn' icon='copy' data-clipboard-target='#ipfs_link' />
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col span={22}>
+                                <Input id='https_link' value={`https://ipfs.io/ipfs/${selectedHash}`} style={{ display: 'inline-block' }} />
+                            </Col>
+                            <Col span={2} style={{ marginLeft: 0, display: 'flex', justifyContent: 'center' }}>
+                                <Button className='share_btn' icon='copy' data-clipboard-target='#https_link' />
+                            </Col>
+                        </Row>
+                    </div>
                 </Modal>
             </div>
         );

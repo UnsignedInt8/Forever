@@ -28,13 +28,15 @@ const english = {
     placeholders: {
         folder: 'Folder name',
         search: 'Search',
+        share: 'Share',
     },
 
     messages: {
         dragfiles: 'Click or drag file to this area',
-        uploadingsucceeded: 'file uploaded successfully.',
-        uploadingfailed: 'file upload failed.',
+        uploadingsucceeded: 'uploaded successfully.',
+        uploadingfailed: 'uploading failed.',
         areyousure: 'Are you sure',
+        copied: 'Copied to clipboard',
     },
 
     tooltips: {
