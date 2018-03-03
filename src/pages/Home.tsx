@@ -8,6 +8,7 @@ import * as filesize from 'filesize';
 import lang from '../i18n';
 import NetworkManager from '../p2p/NetworkManager';
 import { FileItem } from '../components/FileItem';
+import { FilePreviewer } from '../components/FilePreviewer';
 import IPFSDir from '../models/Dir';
 import IPFSFile from '../models/File';
 import FileSystem from '../p2p/FileSystem';
@@ -335,8 +336,9 @@ export class Home extends React.Component<{}, HomeStates> {
                     </Row>
                 </Row>
 
-                <Row style={{ paddingTop: 72 }}>
+                <Row style={{ paddingTop: 72, position: 'relative' }}>
                     <Table loading={this.state.isLoading} rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} pagination={{ pageSize: 30 }} rowKey='id' />
+                    {/* <FilePreviewer style={{ position: 'absolute', top: 0, width: '100%', background: 'pink', height: '100%' }} /> */}
                 </Row>
 
                 <Modal

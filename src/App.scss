@@ -24,9 +24,19 @@
 }
 
 .action_icon :hover {
-  color: 'deepskyblue';
+  color: deepskyblue;
 }
 
 .ant-table-pagination {
   margin-right: 12px !important;
+}
+
+.nav_icon {
+  font-size: 20px;
+  color: white;
+  margin-right: 18px;
+}
+
+.nav_icon:hover {
+  color: silver;
 }
