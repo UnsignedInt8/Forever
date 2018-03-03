@@ -13,6 +13,7 @@ import IPFSFile from '../models/File';
 import FileSystem from '../p2p/FileSystem';
 import StorageItem from '../models/StorageItem';
 import * as Clipboard from 'clipboard';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 interface HomeStates {
     clientOffset?: ClientRect;
@@ -94,6 +95,7 @@ export class Home extends React.Component<{}, HomeStates> {
         name: 'file',
         multiple: true,
         action: '',
+        beforeUpload: (file: UploadFile, fileList: UploadFile[]) => { if (file) return file.type.length > 0; return true; },
         onChange: (info) => {
             const status = info.file.status;
 
@@ -105,19 +107,25 @@ export class Home extends React.Component<{}, HomeStates> {
                     message.error(`${info.file.name} ${lang.messages.uploadingfailed}`);
                     break;
                 default:
-                    console.log(status, info.file, info.fileList);
+                    // console.log(status, info.file, info.fileList);
+                    break;
             }
         },
         customRequest: async (options: { action: string, data: any, file: File, filename: string, headers: any, onError: (err, ret) => void, onProgress: (e: { percent: number }) => void, onSuccess: (ret, xhr) => void, withCredentials: boolean }) => {
+
+            if (!options.file.type) {
+                options.onProgress({ percent: 0 });
+                options.onError(new Error(`Can't upload folder`), null);
+                return;
+            }
+
             let fs = await NetworkManager.getFs();
             let node = await NetworkManager.getNode();
             let dirId = this.state.currentDir.id;
 
             fs.addFile(options.file, dirId, (offset, total) => { options.onProgress({ percent: offset / total * 100 }) })
                 .catch((e) => options.onError(e, null))
-                .then(files => { options.onSuccess(files, null); this.refreshCurrentDir(), console.log(files); });
-
-            console.log('customRequest', options);
+                .then(files => { options.onSuccess(files, null); this.refreshCurrentDir() });
         },
     };
 
