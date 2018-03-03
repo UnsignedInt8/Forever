@@ -33,6 +33,7 @@ type Language = {
         search: string;
         share: string;
         rename: string,
+        allfiles: string;
     },
 
     messages: {

@@ -31,10 +31,13 @@ interface HomeStates {
     data: (IPFSDir | IPFSFile)[];
     selectedItem?: IPFSDir | IPFSFile;
     newItemName?: string;
+
+    dirsStack: IPFSDir[];
 }
 
 export class Home extends React.Component<{}, HomeStates> {
 
+    container: HTMLDivElement;
     fs: FileSystem;
 
     readonly mobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -120,13 +123,9 @@ export class Home extends React.Component<{}, HomeStates> {
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-        this.state = { selectedRowKeys: [], data: [], isLoading: true, };
+        this.state = { selectedRowKeys: [], data: [], isLoading: true, dirsStack: [] };
         window.onresize = () => { this.setState({ clientOffset: this.container.getBoundingClientRect() }) };
         (new Clipboard('.share_btn')).on('success', () => { message.success(lang.messages.copied) });
-    }
-
-    onSelectChange = (selectedRowKeys) => {
-        this.setState({ selectedRowKeys });
     }
 
     async onFolderSave() {
@@ -141,6 +140,43 @@ export class Home extends React.Component<{}, HomeStates> {
 
     onItemClicked(item: IPFSDir | IPFSFile) {
         this.setState({ selectedItem: item });
+
+        switch (item.type) {
+            case 'dir':
+                this.switchFolder(item as IPFSDir);
+                break;
+            case 'file':
+                this.openFile(item as IPFSFile);
+                break;
+            default: break;
+        }
+    }
+
+    private switchFolder(dir: IPFSDir) {
+        this.state.dirsStack.push(dir);
+        this.setState({ currentDir: dir }, async () => {
+            await this.refreshCurrentDir();
+        });
+    }
+
+    private jumpToFolder(target: IPFSDir) {
+        target = target || this.fs.getRootDir();
+
+        let dir: IPFSDir;
+        while (true) {
+            dir = this.state.dirsStack[this.state.dirsStack.length - 1];
+            if (!dir) break;
+
+            if (dir.id !== target.id) this.state.dirsStack.pop();
+            if (dir.id === target.id) break;
+        }
+
+        dir = dir || this.fs.getRootDir();
+        this.setState({ currentDir: dir }, () => this.refreshCurrentDir());
+    }
+
+    private openFile(file: IPFSFile) {
+
     }
 
     async onItemRename(item: IPFSDir | IPFSFile) {
@@ -154,7 +190,7 @@ export class Home extends React.Component<{}, HomeStates> {
             this.fs.updateDir(this.state.currentDir);
         }
 
-        this.setState({ openRenameModal: false, });
+        this.setState({ openRenameModal: false, newItemName: '' });
     }
 
     async onItemDelete(item: IPFSDir | IPFSFile) {
@@ -196,12 +232,15 @@ export class Home extends React.Component<{}, HomeStates> {
         await this.refreshCurrentDir();
     }
 
+    onTableSelectChange = (selectedRowKeys) => this.setState({ selectedRowKeys });
+
     async componentDidMount() {
         this.setState({ clientOffset: this.container.getBoundingClientRect() })
+
         NetworkManager.onStateChanged(this.updateNetworkState);
         this.fs = await NetworkManager.getFs();
-        this.setState({ isLoading: false, currentDir: this.fs.getRootDir() });
-        await this.refreshCurrentDir();
+
+        this.setState({ isLoading: false, currentDir: this.fs.getRootDir() }, () => this.refreshCurrentDir());
     }
 
     componentWillUnmount() {
@@ -226,14 +265,12 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ data });
     }
 
-    container: HTMLDivElement;
-
     render() {
         const selectedHash = this.state.selectedItem ? this.state.selectedItem.id : '';
         const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
-            onChange: this.onSelectChange,
+            onChange: this.onTableSelectChange,
         };
 
         const newFolder = (
@@ -278,7 +315,14 @@ export class Home extends React.Component<{}, HomeStates> {
 
                     <Row style={{ marginTop: 4, paddingLeft: 0, fontSize: 12 }}>
                         <Breadcrumb separator='>'>
-                            <Breadcrumb.Item>All Files</Breadcrumb.Item>
+                            <Breadcrumb.Item><a onClick={e => this.jumpToFolder(null)}>{lang.placeholders.allfiles}</a></Breadcrumb.Item>
+                            {
+                                this.state.dirsStack.map((d, i) =>
+                                    <Breadcrumb.Item key={d.id}>
+                                        {i === this.state.dirsStack.length - 1 ? <span>{d.title}</span> : <a onClick={e => this.jumpToFolder(d)}>{d.title}</a>}
+                                    </Breadcrumb.Item>
+                                )
+                            }
                         </Breadcrumb>
                     </Row>
                 </Row>

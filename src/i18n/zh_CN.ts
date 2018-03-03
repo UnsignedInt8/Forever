@@ -30,6 +30,7 @@ const chinese_simpified = {
         search: '搜索',
         share: '分享',
         rename: '重命名',
+        allfiles: '全部文件',
     },
 
     messages: {

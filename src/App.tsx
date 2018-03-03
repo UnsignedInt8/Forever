@@ -80,8 +80,8 @@ class App extends React.Component<{}, HomeStates> {
               Forever, built on IPFS
             </Footer>
           </Layout>
-        </Layout >
 
+        </Layout >
 
       </Router>
     );

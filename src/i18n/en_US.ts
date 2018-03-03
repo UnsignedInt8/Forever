@@ -30,6 +30,7 @@ const english = {
         search: 'Search',
         share: 'Share',
         rename: 'Rename',
+        allfiles: 'All Files',
     },
 
     messages: {
