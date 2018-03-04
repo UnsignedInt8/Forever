@@ -22,6 +22,7 @@ interface HomeStates {
     openUploadModal?: boolean;
     openShareModal?: boolean;
     openRenameModal?: boolean;
+    openPreviewModal?: boolean;
     folderPopVisible?: boolean;
     selectedPopVisible?: boolean;
 
@@ -185,7 +186,12 @@ export class Home extends React.Component<{}, HomeStates> {
     }
 
     private openFile(file: IPFSFile) {
+        console.log(file.mime, FilePreviewer.isSupported(file.mime));
+        if (!FilePreviewer.isSupported(file.mime)) {
+            return;
+        }
 
+        this.setState({ openPreviewModal: true });
     }
 
     async onItemRename(item: IPFSDir | IPFSFile) {
@@ -276,6 +282,9 @@ export class Home extends React.Component<{}, HomeStates> {
 
     render() {
         const selectedHash = this.state.selectedItem ? this.state.selectedItem.id : '';
+        const selectedTitle = this.state.selectedItem ? this.state.selectedItem.title : '';
+        const selectedMime = this.state.selectedItem ? this.state.selectedItem['mime'] : '';
+
         const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
@@ -299,7 +308,7 @@ export class Home extends React.Component<{}, HomeStates> {
         );
 
         return (
-            <div ref={e => this.container = e} style={{}}>
+            <div ref={e => this.container = e} style={{ position: 'relative' }}>
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
@@ -338,8 +347,11 @@ export class Home extends React.Component<{}, HomeStates> {
 
                 <Row style={{ paddingTop: 72, position: 'relative' }}>
                     <Table loading={this.state.isLoading} rowSelection={rowSelection} columns={this.columns} dataSource={this.state.data} pagination={{ pageSize: 30 }} rowKey='id' />
-                    {/* <FilePreviewer style={{ position: 'absolute', top: 0, width: '100%', background: 'pink', height: '100%' }} /> */}
                 </Row>
+
+                <Modal visible={this.state.openPreviewModal} footer={null} bodyStyle={{ width: '100%' }} width={window.innerWidth * 0.8} onCancel={e => this.setState({ openPreviewModal: false })}>
+                    <FilePreviewer style={{ width: '100%', height: '100%' }} ipfsHash={selectedHash} mime={selectedMime} name={selectedTitle} />
+                </Modal>
 
                 <Modal
                     visible={this.state.openUploadModal}
