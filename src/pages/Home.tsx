@@ -187,7 +187,9 @@ export class Home extends React.Component<{}, HomeStates> {
 
     private openFile(file: IPFSFile) {
         console.log(file.mime, FilePreviewer.isSupported(file.mime));
+
         if (!FilePreviewer.isSupported(file.mime)) {
+            window.open(`https://ipfs.io/ipfs/${file.id}`, '_blank');
             return;
         }
 
