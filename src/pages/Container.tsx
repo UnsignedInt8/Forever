@@ -69,8 +69,8 @@ class App extends React.Component<{}, HomeStates> {
           <Layout style={{ marginLeft: this.state.contentMarginLeft, }}>
             <Header style={{ background: '#101529', padding: 0, height: 60, position: 'fixed', width: '100%', top: 0, right: 0, zIndex: 1 }}>
               <Row type='flex' justify='end' style={{}}>
-                <a className='nav_icon' href="https://twitter.com/" target='_blank'><Icon type='twitter' /></a>
-                <a className='nav_icon' href="https://github.com" target='_blank'><Icon type='github' /></a>
+                <a className='social-icon' href="https://twitter.com/" target='_blank'><Icon type='twitter' /></a>
+                <a className='social-icon' href="https://github.com" target='_blank'><Icon type='github' /></a>
               </Row>
             </Header>
             <Content style={{ margin: '60px 0 0 0', overflow: 'initial', height: '100%', minHeight: `${window.innerHeight - 92}px`, }}>
