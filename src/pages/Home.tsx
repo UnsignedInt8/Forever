@@ -38,7 +38,11 @@ interface HomeStates {
     dirsStack: IPFSDir[];
 }
 
-export class Home extends React.Component<{}, HomeStates> {
+interface HomeProps {
+    list?: 'all' | 'videos' | 'music' | 'images',
+}
+
+export class Home extends React.Component<HomeProps, HomeStates> {
 
     container: HTMLDivElement;
     fs: FileSystem;
@@ -215,6 +219,11 @@ export class Home extends React.Component<{}, HomeStates> {
             return await this.fs.rmdir(item.id);
         }
 
+        if (!this.state.currentDir) {
+            this.deleteFiles([item.id]);
+            return;
+        }
+
         let index = this.state.currentDir.files.findIndex(i => i.id === item.id);
         if (index === -1) return;
         this.state.currentDir.files.splice(index, 1);
@@ -229,6 +238,12 @@ export class Home extends React.Component<{}, HomeStates> {
 
     async onSelectedRowDelete() {
         if (!this.state.selectedRowKeys || this.state.selectedRowKeys.length === 0) return;
+
+        if (!this.state.currentDir) {
+            this.deleteFiles(this.state.selectedRowKeys);
+            this.setState({ selectedPopVisible: false, selectedRowKeys: [] });
+            return;
+        }
 
         this.setState({ isLoading: true });
 
@@ -246,6 +261,23 @@ export class Home extends React.Component<{}, HomeStates> {
 
         this.setState({ selectedPopVisible: false, selectedRowKeys: [], isLoading: false });
         await this.fs.updateDir(this.state.currentDir);
+        await this.refreshCurrentDir();
+    }
+
+    private async deleteFiles(ids: string[]) {
+        this.setState({ isLoading: true });
+
+        let files = this.state.data as IPFSFile[];
+        let pending = files.filter(f => ids.indexOf(f.id) > -1);
+
+        for (let file of pending) {
+            let dir = this.fs.getDir(file.dirId);
+            let index = dir.files.findIndex(v => v.id === file.id);
+            if (index === -1) continue;
+            dir.files.splice(index, 1);
+            await this.fs.updateDir(dir);
+        }
+
         await this.refreshCurrentDir();
     }
 
@@ -268,9 +300,19 @@ export class Home extends React.Component<{}, HomeStates> {
         this.setState({ ipfsReady: NetworkManager.ready });
     }
 
-    private async refreshCurrentDir() {
+    async refreshCurrentDir() {
         this.setState({ isLoading: true });
-        let dir = await this.fs.getDir(this.state.currentDir.id);
+
+        if (this.props.list && this.props.list !== 'all') {
+            let allFolders = this.fs.listAllItems().filter(i => i.type === 'dir') as IPFSDir[];
+            let mimeMaps = new Map([['videos', 'video/'], ['music', 'audio/'], ['images', 'image/']])
+            let files = allFolders.reduce<IPFSFile[]>((prev, cur) => prev.concat(cur.files.filter(f => f.mime.startsWith(mimeMaps.get(this.props.list)))), []);
+            files = files.distinct((i1, i2) => i1.id === i2.id).toArray();
+            this.setState({ data: files, isLoading: false, currentDir: null });
+            return;
+        }
+
+        let dir = this.fs.getDir(this.state.currentDir.id);
         let data = dir.dirs.concat(dir.files as any[]);
         this.setState({ data, isLoading: false, currentDir: dir });
     }
@@ -283,6 +325,8 @@ export class Home extends React.Component<{}, HomeStates> {
     }
 
     render() {
+        const actionButtonsDisabled = (this.props.list && this.props.list !== 'all') ? true : !this.state.ipfsReady;
+
         const selectedHash = this.state.selectedItem ? this.state.selectedItem.id : '';
         const selectedTitle = this.state.selectedItem ? this.state.selectedItem.title : '';
         const selectedMime = this.state.selectedItem ? this.state.selectedItem['mime'] : '';
@@ -314,9 +358,9 @@ export class Home extends React.Component<{}, HomeStates> {
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
-                            <Button className='action_button' icon='upload' type='primary' disabled={!this.state.ipfsReady} onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
+                            <Button className='action_button' icon='upload' type='primary' disabled={actionButtonsDisabled} onClick={e => this.setState({ openUploadModal: true })}>{lang.buttons.upload}</Button>
                             <Popover trigger='click' content={newFolder} placement='bottom' visible={this.state.folderPopVisible}>
-                                <Button className='action_button' icon='folder-add' disabled={!this.state.ipfsReady} onClick={e => this.setState({ folderPopVisible: !this.state.folderPopVisible })} >{lang.buttons.newfolder}</Button>
+                                <Button className='action_button' icon='folder-add' disabled={actionButtonsDisabled} onClick={e => this.setState({ folderPopVisible: !this.state.folderPopVisible })} >{lang.buttons.newfolder}</Button>
                             </Popover>
                             <Popover trigger='click' content={deleteRows} placement='bottom' visible={this.state.selectedPopVisible}>
                                 <Button className='action_button' icon='delete' style={{ display: `${this.state.selectedRowKeys.length > 0 ? '' : 'none'}` }} onClick={e => this.setState({ selectedPopVisible: !this.state.selectedPopVisible })}>{lang.buttons.delete}</Button>
