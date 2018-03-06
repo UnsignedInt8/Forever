@@ -62,10 +62,8 @@ class App extends React.Component<{}, HomeStates> {
                             <span className="nav-text">{lang.siders.settings}</span>
                         </Menu.Item>
                         <Menu.Item key="info">
-                            <Link to='/about'>
-                                <Icon type="info" />
-                                <span className="nav-text">{lang.siders.about}</span>
-                            </Link>
+                            <Icon type="info" />
+                            <span className="nav-text">{lang.siders.about}</span>
                         </Menu.Item>
                     </Menu>
                 </Sider>

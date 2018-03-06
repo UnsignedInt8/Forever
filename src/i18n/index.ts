@@ -49,6 +49,11 @@ type Language = {
         share: string;
         rename: string;
         delete: string;
+    },
+
+    about: {
+        intro: { p1: string, p2: string; };
+        dependences: string;
     }
 }
 

@@ -47,6 +47,15 @@ const chinese_simpified = {
         rename: '重命名',
         delete: '删除',
     },
+
+    about: {
+        intro: {
+            p1: 'Forever 是一个基于 IPFS 的开源应用，你可以使用 Forever 无任何限制地存储任意文件。基于 IPFS 的特性，文件永不丢失。中国用户可能需要科学上网才能使用 Forever 的完整功能。',
+            p2: '欢迎在Github页面提交问题和建议。',
+        },
+        sponsored: 'Forever 由以下大佬赞助: ',
+        dependences: 'Forever 基于以下开源项目: ',
+    }
 }
 
 export default chinese_simpified;
