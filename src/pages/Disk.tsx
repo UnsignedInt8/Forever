@@ -15,8 +15,9 @@ import FileSystem from '../p2p/FileSystem';
 import StorageItem from '../models/StorageItem';
 import * as Clipboard from 'clipboard';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { CSSProperties } from 'react';
 
-interface HomeStates {
+interface DiskStates {
     clientOffset?: ClientRect;
     newFolderName?: string;
     openUploadModal?: boolean;
@@ -38,11 +39,12 @@ interface HomeStates {
     dirsStack: IPFSDir[];
 }
 
-interface HomeProps {
-    list?: 'all' | 'videos' | 'music' | 'images',
+interface DiskProps {
+    list?: 'all' | 'videos' | 'music' | 'images';
+    style?: CSSProperties;
 }
 
-export class Home extends React.Component<HomeProps, HomeStates> {
+export class Disk extends React.Component<DiskProps, DiskStates> {
 
     container: HTMLDivElement;
     fs: FileSystem;
