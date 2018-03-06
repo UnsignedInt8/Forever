@@ -8,10 +8,12 @@ import { Disk } from './Disk';
 import { Test } from './Test';
 import NetworkManager from '../p2p/NetworkManager';
 import About from './About';
+import * as kinq from 'kinq';
 
 interface HomeStates {
     contentMarginLeft: number;
     listType: 'all' | 'videos' | 'music' | 'images';
+    selectedMenuItem: Map<string, boolean>
 }
 
 class App extends React.Component<{}, HomeStates> {
@@ -21,7 +23,14 @@ class App extends React.Component<{}, HomeStates> {
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-        this.state = { contentMarginLeft: 200, listType: 'all' };
+        this.state = { contentMarginLeft: 200, listType: 'all', selectedMenuItem: new Map([['files', true], ['about', false]]) };
+    }
+
+    onFileMenuClick(tag: string, listType?: 'all' | 'music' | 'videos' | 'images') {
+        kinq.toLinqable(this.state.selectedMenuItem.keys()).each(k => this.state.selectedMenuItem.set(k, false));
+        console.log(this.state.selectedMenuItem);
+        this.state.selectedMenuItem.set(tag, true);
+        this.setState({ listType: listType }, () => this.home.refreshCurrentDir());
     }
 
     render() {
@@ -34,25 +43,25 @@ class App extends React.Component<{}, HomeStates> {
                     </div>
                     <Menu theme="dark" mode="inline" defaultSelectedKeys={['all']}>
                         <Menu.Item key="all">
-                            <div onClick={e => this.setState({ listType: 'all' }, () => this.home.refreshCurrentDir())}>
+                            <div onClick={e => this.onFileMenuClick('files', 'all')}>
                                 <Icon type="hdd" />
                                 <span className="nav-text">{lang.siders.all}</span>
                             </div>
                         </Menu.Item>
                         <Menu.Item key="videos">
-                            <div onClick={e => this.setState({ listType: 'videos' }, () => this.home.refreshCurrentDir())}>
+                            <div onClick={e => this.onFileMenuClick('files', 'videos')}>
                                 <Icon type="video-camera" />
                                 <span className="nav-text">{lang.siders.videos}</span>
                             </div>
                         </Menu.Item>
                         <Menu.Item key="music">
-                            <div onClick={e => this.setState({ listType: 'music' }, () => this.home.refreshCurrentDir())}>
+                            <div onClick={e => this.onFileMenuClick('files', 'music')}>
                                 <Icon type="play-circle-o" />
                                 <span className="nav-text">{lang.siders.music}</span>
                             </div>
                         </Menu.Item>
                         <Menu.Item key="pictures">
-                            <div onClick={e => this.setState({ listType: 'images' }, () => this.home.refreshCurrentDir())}>
+                            <div onClick={e => this.onFileMenuClick('files', 'images')}>
                                 <Icon type="picture" />
                                 <span className="nav-text">{lang.siders.pictures}</span>
                             </div>
@@ -62,8 +71,10 @@ class App extends React.Component<{}, HomeStates> {
                             <span className="nav-text">{lang.siders.settings}</span>
                         </Menu.Item>
                         <Menu.Item key="info">
-                            <Icon type="info" />
-                            <span className="nav-text">{lang.siders.about}</span>
+                            <div onClick={e => this.onFileMenuClick('about')}>
+                                <Icon type="info" />
+                                <span className="nav-text">{lang.siders.about}</span>
+                            </div>
                         </Menu.Item>
                     </Menu>
                 </Sider>
@@ -77,8 +88,8 @@ class App extends React.Component<{}, HomeStates> {
                     </Header>
                     <Content style={{ margin: '60px 0 0 0', overflow: 'initial', height: '100%', minHeight: `${window.innerHeight - 92}px`, }}>
                         <div style={{ background: '#fff', minHeight: `${window.innerHeight - 92}px`, position: 'relative' }}>
-                            <Disk ref={e => this.home = e} list={this.state.listType} />
-                            <About />
+                            <Disk ref={e => this.home = e} list={this.state.listType} style={{ position: 'absolute', top: 0, display: `${this.state.selectedMenuItem.get('files') ? 'block' : 'none'}` }} />
+                            <About style={{ position: 'absolute', top: 0, display: `${this.state.selectedMenuItem.get('about') ? 'block' : 'none'}` }} />
                         </div>
                     </Content>
                     <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100, padding: '10px 0 8px' }}>

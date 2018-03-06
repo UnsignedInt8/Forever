@@ -221,7 +221,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
             return await this.fs.rmdir(item.id);
         }
 
-        if (!this.state.currentDir) {
+        if (!this.state.currentDir.id) {
             this.deleteFiles([item.id]);
             return;
         }
@@ -241,7 +241,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
     async onSelectedRowDelete() {
         if (!this.state.selectedRowKeys || this.state.selectedRowKeys.length === 0) return;
 
-        if (!this.state.currentDir) {
+        if (!this.state.currentDir.id) {
             this.deleteFiles(this.state.selectedRowKeys);
             this.setState({ selectedPopVisible: false, selectedRowKeys: [] });
             return;
@@ -303,6 +303,8 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
     }
 
     async refreshCurrentDir() {
+        if (!this.fs) return;
+        
         this.setState({ isLoading: true });
 
         if (this.props.list && this.props.list !== 'all') {
@@ -310,11 +312,12 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
             let mimeMaps = new Map([['videos', 'video/'], ['music', 'audio/'], ['images', 'image/']])
             let files = allFolders.reduce<IPFSFile[]>((prev, cur) => prev.concat(cur.files.filter(f => f.mime.startsWith(mimeMaps.get(this.props.list)))), []);
             files = files.distinct((i1, i2) => i1.id === i2.id).toArray();
-            this.setState({ data: files, isLoading: false, currentDir: null, dirsStack: [] });
+            let vDir: IPFSDir = { files, dirs: [], id: null, parentId: null, title: 'vDir', type: 'dir' };
+            this.setState({ data: files, isLoading: false, currentDir: vDir, dirsStack: [] });
             return;
         }
 
-        let id = this.state.currentDir ? this.state.currentDir.id : 'root';
+        let id = this.state.currentDir && this.state.currentDir.id ? this.state.currentDir.id : 'root';
 
         let dir = this.fs.getDir(id);
         let data = dir.dirs.concat(dir.files as any[]);
@@ -358,7 +361,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
         );
 
         return (
-            <div ref={e => this.container = e} style={{ position: 'relative' }}>
+            <div ref={e => this.container = e} style={Object.assign({ position: 'relative' }, this.props.style)}>
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>

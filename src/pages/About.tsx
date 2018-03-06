@@ -1,11 +1,16 @@
 import * as React from 'react';
 import lang from '../i18n';
+import { CSSProperties } from 'react';
 
-export default class About extends React.Component {
+interface AboutProps {
+    style?: CSSProperties;
+}
+
+export default class About extends React.Component<AboutProps, {}> {
 
     render() {
         return (
-            <div style={{ padding: 12 }}>
+            <div style={Object.assign({ padding: 12 }, this.props.style)}>
                 <p>
                     {lang.about.intro.p1}<br />
                     {lang.about.intro.p2}
