@@ -304,7 +304,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
 
     async refreshCurrentDir() {
         if (!this.fs) return;
-        
+
         this.setState({ isLoading: true });
 
         if (this.props.list && this.props.list !== 'all') {
@@ -384,7 +384,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
                         />
                     </Row>
 
-                    <Row style={{ marginTop: 4, paddingLeft: 0, fontSize: 12 }}>
+                    <Row style={{ marginTop: 4, paddingLeft: 0, fontSize: 12, fontWeight: 200, }}>
                         <Breadcrumb separator='>'>
                             <Breadcrumb.Item><a onClick={e => this.jumpToFolder(null)}>{lang.placeholders.allfiles}</a></Breadcrumb.Item>
                             {

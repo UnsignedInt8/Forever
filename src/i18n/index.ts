@@ -59,8 +59,8 @@ type Language = {
 }
 
 export const langauges = {
-    'zh_CN': zh_CN,
-    'en_US': en_US,
+    'zh-CN': zh_CN,
+    'en-US': en_US,
 };
 
 export default langauges[window.navigator.language] as Language || en_US;
