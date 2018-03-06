@@ -21,6 +21,7 @@ type Language = {
         delete: string;
         rename: string;
         yes: string;
+        getstarted: string;
     },
 
     table: {

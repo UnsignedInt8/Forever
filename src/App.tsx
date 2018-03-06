@@ -4,6 +4,7 @@ const { Header, Content, Footer, Sider } = Layout;
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import './App.scss';
 import Container from './pages/Container';
+import { Land } from './pages/Land';
 
 class App extends React.Component<{}, {}> {
 
@@ -15,7 +16,8 @@ class App extends React.Component<{}, {}> {
     return (
       <Router>
         <Switch>
-          <Route path='/' component={Container} />
+          <Route exact path='/' component={Land} />
+          <Route path='/files' component={Container} />
         </Switch>
       </Router>
     );

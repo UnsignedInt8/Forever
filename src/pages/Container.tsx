@@ -28,7 +28,6 @@ class App extends React.Component<{}, HomeStates> {
 
     onFileMenuClick(tag: string, listType?: 'all' | 'music' | 'videos' | 'images') {
         kinq.toLinqable(this.state.selectedMenuItem.keys()).each(k => this.state.selectedMenuItem.set(k, false));
-        console.log(this.state.selectedMenuItem);
         this.state.selectedMenuItem.set(tag, true);
         this.setState({ listType: listType }, () => this.home.refreshCurrentDir());
     }
@@ -66,10 +65,10 @@ class App extends React.Component<{}, HomeStates> {
                                 <span className="nav-text">{lang.siders.pictures}</span>
                             </div>
                         </Menu.Item>
-                        <Menu.Item key="settings">
+                        {/* <Menu.Item key="settings">
                             <Icon type="setting" />
                             <span className="nav-text">{lang.siders.settings}</span>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="info">
                             <div onClick={e => this.onFileMenuClick('about')}>
                                 <Icon type="info" />

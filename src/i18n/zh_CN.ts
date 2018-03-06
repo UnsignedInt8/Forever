@@ -18,6 +18,7 @@ const chinese_simpified = {
         delete: '删除',
         rename: '重命名',
         yes: '确定',
+        getstarted: '进入',
     },
 
     table: {

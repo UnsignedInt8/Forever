@@ -18,6 +18,7 @@ const english = {
         delete: 'Delete',
         rename: 'Rename',
         yes: 'Yes',
+        getstarted: 'GET STARTED',
     },
 
     table: {
@@ -50,7 +51,7 @@ const english = {
 
     about: {
         intro: {
-            p1: 'Forever is an open-source file hosting/sharing app which based on IPFS. With Forever, you can save your files into the IPFS network without any limiations.',
+            p1: 'Forever is an open-source file hosting/sharing app which built on IPFS. With Forever, you can save your files into the IPFS network without any limiations.',
             p2: 'Have ideas or suggestions? Submit an issue on Github page.',
         },
         sponsored: 'Sponsored by: ',
