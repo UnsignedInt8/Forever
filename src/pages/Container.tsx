@@ -10,15 +10,17 @@ import NetworkManager from '../p2p/NetworkManager';
 
 interface HomeStates {
     contentMarginLeft: number;
+    listType: 'all' | 'videos' | 'music' | 'images';
 }
 
 class App extends React.Component<{}, HomeStates> {
 
     private silder: React.Component;
+    private home: Home;
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-        this.state = { contentMarginLeft: 200 };
+        this.state = { contentMarginLeft: 200, listType: 'all' };
     }
 
     render() {
@@ -32,16 +34,28 @@ class App extends React.Component<{}, HomeStates> {
                         </div>
                         <Menu theme="dark" mode="inline" defaultSelectedKeys={['all']}>
                             <Menu.Item key="all">
-                                <Icon type="hdd" />
-                                <span className="nav-text">{lang.siders.all}</span>
+                                <div onClick={e => this.setState({ listType: 'all' }, () => this.home.refreshCurrentDir())}>
+                                    <Icon type="hdd" />
+                                    <span className="nav-text">{lang.siders.all}</span>
+                                </div>
                             </Menu.Item>
                             <Menu.Item key="videos">
-                                <Icon type="video-camera" />
-                                <span className="nav-text">{lang.siders.videos}</span>
+                                <div onClick={e => this.setState({ listType: 'videos' }, () => this.home.refreshCurrentDir())}>
+                                    <Icon type="video-camera" />
+                                    <span className="nav-text">{lang.siders.videos}</span>
+                                </div>
                             </Menu.Item>
                             <Menu.Item key="music">
-                                <Icon type="play-circle-o" />
-                                <span className="nav-text">{lang.siders.music}</span>
+                                <div onClick={e => this.setState({ listType: 'music' }, () => this.home.refreshCurrentDir())}>
+                                    <Icon type="play-circle-o" />
+                                    <span className="nav-text">{lang.siders.music}</span>
+                                </div>
+                            </Menu.Item>
+                            <Menu.Item key="pictures">
+                                <div onClick={e => this.setState({ listType: 'images' }, () => this.home.refreshCurrentDir())}>
+                                    <Icon type="picture" />
+                                    <span className="nav-text">{lang.siders.pictures}</span>
+                                </div>
                             </Menu.Item>
                             <Menu.Item key="settings">
                                 <Icon type="setting" />
@@ -57,13 +71,13 @@ class App extends React.Component<{}, HomeStates> {
                     <Layout style={{ marginLeft: this.state.contentMarginLeft, }}>
                         <Header style={{ background: '#101529', padding: 0, height: 60, position: 'fixed', width: '100%', top: 0, right: 0, zIndex: 1 }}>
                             <Row type='flex' justify='end' style={{}}>
-                                <a className='social-icon' href="https://twitter.com/" target='_blank'><Icon type='twitter' /></a>
-                                <a className='social-icon' href="https://github.com" target='_blank'><Icon type='github' /></a>
+                                <a className='social-icon' href="https://twitter.com/UnsignedInt8" target='_blank'><Icon type='twitter' /></a>
+                                <a className='social-icon' href="https://github.com/unsignedint8/forever" target='_blank'><Icon type='github' /></a>
                             </Row>
                         </Header>
                         <Content style={{ margin: '60px 0 0 0', overflow: 'initial', height: '100%', minHeight: `${window.innerHeight - 92}px`, }}>
                             <div style={{ background: '#fff', minHeight: `${window.innerHeight - 92}px`, position: 'relative' }}>
-                                <Home list={'all'} />
+                                <Home ref={e => this.home = e} list={this.state.listType} />
                             </div>
                         </Content>
                         <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100, padding: '10px 0 8px' }}>

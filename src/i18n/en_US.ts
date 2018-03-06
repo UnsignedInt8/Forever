@@ -4,6 +4,7 @@ const english = {
         all: 'All',
         videos: 'Videos',
         music: 'Music',
+        pictures: 'Pictures',
         about: 'About',
         settings: 'Settings',
     },

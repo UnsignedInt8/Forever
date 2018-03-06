@@ -308,11 +308,13 @@ export class Home extends React.Component<HomeProps, HomeStates> {
             let mimeMaps = new Map([['videos', 'video/'], ['music', 'audio/'], ['images', 'image/']])
             let files = allFolders.reduce<IPFSFile[]>((prev, cur) => prev.concat(cur.files.filter(f => f.mime.startsWith(mimeMaps.get(this.props.list)))), []);
             files = files.distinct((i1, i2) => i1.id === i2.id).toArray();
-            this.setState({ data: files, isLoading: false, currentDir: null });
+            this.setState({ data: files, isLoading: false, currentDir: null, dirsStack: [] });
             return;
         }
 
-        let dir = this.fs.getDir(this.state.currentDir.id);
+        let id = this.state.currentDir ? this.state.currentDir.id : 'root';
+
+        let dir = this.fs.getDir(id);
         let data = dir.dirs.concat(dir.files as any[]);
         this.setState({ data, isLoading: false, currentDir: dir });
     }

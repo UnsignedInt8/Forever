@@ -4,6 +4,7 @@ const chinese_simpified = {
         all: '文件',
         videos: '视频',
         music: '音乐',
+        pictures: '图片',
         about: '关于',
         settings: '设置',
     },

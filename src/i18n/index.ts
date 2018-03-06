@@ -7,6 +7,7 @@ type Language = {
         files: string;
         videos: string;
         music: string;
+        pictures: string;
         about: string;
         settings: string;
     },
