@@ -386,11 +386,11 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
 
                     <Row style={{ marginTop: 4, paddingLeft: 0, fontSize: 12, fontWeight: 200, }}>
                         <Breadcrumb separator='>'>
-                            <Breadcrumb.Item><a onClick={e => this.jumpToFolder(null)}>{lang.placeholders.allfiles}</a></Breadcrumb.Item>
+                            <Breadcrumb.Item><a className='breadcrumb-text' onClick={e => this.jumpToFolder(null)}>{lang.placeholders.allfiles}</a></Breadcrumb.Item>
                             {
                                 this.state.dirsStack.map((d, i) =>
                                     <Breadcrumb.Item key={d.id}>
-                                        {i === this.state.dirsStack.length - 1 ? <span>{d.title}</span> : <a onClick={e => this.jumpToFolder(d)}>{d.title}</a>}
+                                        {i === this.state.dirsStack.length - 1 ? <span className='breadcrumb-text'>{d.title}</span> : <a className='breadcrumb-text' onClick={e => this.jumpToFolder(d)}>{d.title}</a>}
                                     </Breadcrumb.Item>
                                 )
                             }
