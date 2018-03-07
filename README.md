@@ -14,9 +14,9 @@ You can also build the project to host local website.
 
 ### 1. Installing Node.js
 
-Go to [https://nodejs.org](https://nodejs.org) to install the latest node.js.
+Install the latest Node.js from [https://nodejs.org](https://nodejs.org).
 
-### 2. Building project
+### 2. Building the project
 
 ```
 git clone https://github.com/UnsignedInt8/Forever.git
@@ -24,7 +24,7 @@ cd Forever
 npm install
 ```
 
-After all dependences having been installed, type this commands.
+After all dependences having been installed, type this command.
 
 ```
 npm run eject
@@ -62,11 +62,11 @@ Almostly done, the last step is building this project.
 npm run build
 ```
 
-Done! The website files are located in `build` folder. 
+Done! The website files are located in the `build` folder. 
 
-### 3. Launch a http-server
+### 3. Launch a HTTP server
 
-You also need to launch a http-server on you machine to host the website.
+You also need to launch a http-server on your machine to host the website.
 
 ```
 npm i -g http-server
