@@ -22,7 +22,7 @@ export default class About extends React.Component<AboutProps, {}> {
                     <a href="https://reactjs.org" target='_blank'>React.js</a><br />
                 </p>
                 <p style={{ fontSize: 10 }}>
-                    Ver 0.1.0
+                    Ver 0.1.1
                 </p>
             </div>
         );
