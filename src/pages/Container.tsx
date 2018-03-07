@@ -85,15 +85,18 @@ class App extends React.Component<{}, HomeStates> {
                             <a className='social-icon' href="https://github.com/unsignedint8/forever" target='_blank'><Icon type='github' /></a>
                         </Row>
                     </Header>
-                    <Content style={{ margin: '60px 0 0 0', overflow: 'initial', height: '100%', minHeight: `${window.innerHeight - 92}px`, }}>
+                    <Content style={{ margin: '60px 0 0 0', overflow: 'initial', minHeight: `${window.innerHeight - 92}px`, }}>
                         <div style={{ background: '#fff', minHeight: `${window.innerHeight - 92}px`, position: 'relative' }}>
-                            <Disk ref={e => this.home = e} list={this.state.listType} style={{ position: 'absolute', top: 0, display: `${this.state.selectedMenuItem.get('files') ? 'block' : 'none'}` }} />
+                            <Disk ref={e => this.home = e} list={this.state.listType} style={{ top: 0, display: `${this.state.selectedMenuItem.get('files') ? 'block' : 'none'}` }} />
                             <About style={{ position: 'absolute', top: 0, display: `${this.state.selectedMenuItem.get('about') ? 'block' : 'none'}` }} />
                         </div>
+
                     </Content>
+
+
                     <Footer style={{ textAlign: 'center', fontSize: 10, fontWeight: 100, padding: '10px 0 8px' }}>
                         Forever, built on IPFS
-                </Footer>
+                    </Footer>
                 </Layout>
             </Layout >
         );

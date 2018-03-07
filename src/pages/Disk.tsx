@@ -361,7 +361,7 @@ export class Disk extends React.Component<DiskProps, DiskStates> {
         );
 
         return (
-            <div ref={e => this.container = e} style={Object.assign({ position: 'relative' }, this.props.style)}>
+            <div ref={e => this.container = e} style={Object.assign({ position: 'relative', background: 'white' }, this.props.style)}>
                 <Row style={{ padding: '10px 12px 2px 12px', width: `${this.state.clientOffset ? `${window.innerWidth - this.state.clientOffset.left}px` : '100%'}`, zIndex: 1, position: 'fixed', background: '#fff' }} >
                     <Row style={{}} type='flex' justify='space-between'>
                         <div style={{ display: `${this.mobileDevice ? 'none' : undefined}` }}>
