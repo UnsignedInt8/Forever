@@ -6,7 +6,7 @@ A distributed file shareing and hosting app which built on IPFS.
 
 # Get Started
 
-The easiest way to use Forever, click [here](https://ipfs-forever.github.io) to access Forever.
+The easiest way to use Forever is clicking [here](https://ipfs-forever.github.io).
 
 # Host a local website
 
